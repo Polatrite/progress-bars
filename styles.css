@@ -1,0 +1,124 @@
+.night-theme {
+    background-color: #000000;
+    color: #FFFFFF;
+}
+.night-theme .well {
+    background-color: #333333;
+}
+.night-theme .progress {
+    background-color: #555555;
+}
+.night-theme .upgrade-item {
+    background-color: #777777;
+    color: #FFFFFF;
+}
+.night-theme .upgrade-item-disabled {
+    background-color: #555555;
+    color: #FFFFFF;
+}
+
+h2 {
+    margin-top: 6px;
+    margin-bottom: 2px;
+}
+
+.upgrade-item {
+    background-color: #FFFFFF;
+    color: #000000;
+    min-height: 20px;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+}
+
+.upgrade-item-disabled {
+    background-color: #DDDDDD;
+}
+
+.btn-upgrade {
+    padding: 2px 4px;
+}
+
+.row-margin {
+    margin-bottom: 4px;
+}
+
+.tooltip-inner {
+    white-space:pre-wrap;
+    max-width: 500px;
+}
+
+.text-highlight-color {
+    color: #A1D0FF;
+}
+
+.color-tools {
+    color: white;
+    background-color: #7D6228;
+}
+
+.color-wood {
+    color: white;
+    background-color: #A65E00;
+}
+
+.color-forest {
+    color: white;
+    background-color: #10630C;
+}
+
+.color-exp {
+    background-color: #63ADDB;
+}
+
+.color-mountain {
+    background-color: #EDC872;
+}
+
+.color-stone {
+    color: white;
+    background-color: #696969;
+}
+
+.color-ore {
+    color: white;
+    background-color: #B87E58;
+}
+
+.color-sales {
+    background-color: #A1D0FF;
+}
+
+.color-rubber {
+    color: white;
+    background-color: #404040;
+}
+
+.color-mystery {
+    color: white;
+    background-color: purple;
+}
+
+.color-food {
+    background-color: #4BD68C;
+}
+
+.color-ocean {
+    background-color: #61B1D4;
+}
+
+.color-prairie {
+    background-color: #CED45B;
+}
+
+.color-oil {
+    color: white;
+    background-color: #262621;
+}
+
+.color-livestock {
+    background-color: #CFCFCF;
+}

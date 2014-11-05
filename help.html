@@ -1,0 +1,89 @@
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Progress Bars - Help File, Oh Boy!</title>
+	<script src="lib/underscore.min.js" text="type/javascript"></script>
+	<script src="lib/jquery.min.js" text="type/javascript"></script>
+	<script src="lib/bootstrap/js/bootstrap.min.js" text="type/javascript"></script>
+
+	<link  href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link  href="lib/bootstrap/css/bootstrap.override.css" rel="stylesheet">
+	<link  href="styles.css" rel="stylesheet">
+
+</head>
+<body class="container-fluid">
+
+<div class="row">
+	<div class="col-xs-4 col-xs-offset-4">
+	    
+	    <div class="text-center">
+    	    <h1>Progress Bars</h1>
+    	    <h3>A game of worker and resource management.</h3>
+    	    <h4>Oh, and making buckets of money.</h4>
+	    </div>
+
+        <hr>
+        
+        <h3>The Premise</h3>
+        <p>In Progress Bars, your goal is to run an international conglomerate company and make oodles of cash. To accomplish this, you're gonna need some workers. But before that, you'll need some cold, hard cash.</p>
+        
+        <h3>Makin' Money</h3>
+        <ol>
+            <li>Click the <b>Earn Money</b> button to start generating income.</li>
+            <li>Once you have enough money, buy your first <b>Worker</b>.</li>
+            <li>Put this worker on wood-gathering duty by clicking the + button next to <b>Wood</b>.</li>
+            <li>Watch! The worker will slowly gather wood, increasing your supply.</li>
+            <li>Now get a few more workers and allocate them to <b>Wood</b> and <b>Forest</b>.</li>
+            <li>You'll notice that Wood will get a 2x synergy bonus. This happens when you have some supply of Forest when your workers gather Wood.</li>
+            <li>After a little while, you'll unlock <b>Commodity Sales</b>. Put some workers into sales.</li>
+            <li>Every time the sales bar fills up, <b>your workers will transport 50% of the supply of each resource</b> into the sales warehouse.</li>
+            <li>Next time when the sales bar fills up, <b>your workers will sell 50% of the supply that is in the sales warehouse</b> itself.</li>
+            <li>Continuing playing and see what you can discover!</li>
+        </ol>
+        
+        <h3>Nodes</h3>
+        <p>There are 4 different types of nodes:</p>
+        <ul>
+            <li>Biomes - like the Forest</li>
+            <li>Resources - like Wood and Rubber</li>
+            <li>Sales - like Commodity Sales</li>
+            <li>Tools - like Cut Tools</li>
+        </ul>
+        
+        <h3>Quadrants</h3>
+        <p>
+            The game is divided into four quadrants. Each quadrant focuses on a specific Biome. The first biome to be unlocked is <b>Forest</b>.
+            Each biome has two resources associated with it, and also receives bonuses from two types of tools.
+        </p>
+        
+        <h3>Synergy Bonuses</h3>
+        <p>
+            Synergy bonuses are awarded when you meet certain conditions. Each resource can receive several synergy bonuses:
+            <ul>
+                <li>2x from the nearby Biome node</li>
+                <li>2x from the nearby Biome node when that Biome has 80% supply or more</li>
+                <li>2x from the nearby Tool node</li>
+                <li>2x from the nearby Tool node when that Biome has 80% supply or more</li>
+            </ul>
+            The maximum synergy bonus at the start of the game is 16x.
+        </p>
+        
+        <h3>Experience, Level and Sales Multiplier</h3>
+        <p>
+            Each node has a level. The level raises slowly over time as workers work there.
+        </p>
+        <p>
+            <b>When a Tool, Biome, or Resource node</b> gains a level: 1) the unit price of the goods in that node go up, 2) your sales multiplier increases by 0.05x.
+        </p>
+        <p>
+            <b>When a Sales node</b> gains a level: 1) the node gains 10 more max supply, 2) your sales multiplier increases by 0.10x.
+        </p>
+        <p>
+            Your sales multiplier affects the sale rate of all of your resources, so improving it is critical to generating tons of money.
+        </p>
+
+	</div>
+</div>
+
+</body>
+</html>

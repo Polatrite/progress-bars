@@ -1,0 +1,767 @@
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Progress Bars v0.00000001</title>
+	<script src="lib/underscore.min.js" text="type/javascript"></script>
+	<script src="lib/jquery.min.js" text="type/javascript"></script>
+	<script src="lib/jquery.cookie.js" text="type/javascript"></script>
+	<script src="lib/bootstrap/js/bootstrap.min.js" text="type/javascript"></script>
+	<script src="lib/iugo.js" text="type/javascript"></script>
+	<script src="lib/fastclick.js" text="type/javascript"></script>
+	<script src="game.js" text="type/javascript"></script>
+
+	<link  href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link  href="lib/bootstrap/css/bootstrap.override.css" rel="stylesheet">
+	<link  href="styles.css" rel="stylesheet">
+
+	<script text="type/javascript">
+
+$(document).ready(initialize);
+/*document.ontouchmove = function(event) {
+	event.preventDefault();
+}*/
+window.addEventListener('load', function() {
+    FastClick.attach(document.body);
+}, false);
+
+	</script>
+
+</head>
+<body class="bindto-player container-fluid">
+
+<div class="row">
+	<div class="col-lg-1"></div>
+	<div class="col-lg-3 bindto-player">
+	</div>
+</div>
+
+
+<div class="row row-margin">
+	<div class="col-lg-1"></div>
+	<div class="col-lg-2"></div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="stoneDiv" class="invisible">
+			<!-- stone -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will gather stone from the mountain.<br>Receives boosts from <label class='text-highlight-color'>Mountain</label> and <label class='text-highlight-color'>Cut Tools</label>.<br>Sells to <label class='text-highlight-color'>Commodity Sales</label>">
+				Stone L${currencies.stone.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.stone.workers}
+				</div>
+				<div class="col-lg-6">
+					Price: $${currencies.stone.unitPrice}
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.stone.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.stone.supply}/${currencies.stone.maxSupply}
+				</div>
+			</div>
+			<span id="stoneBadge" data-toggle="tooltip" data-original-title="Current synergy bonus" class="label label-default pull-right">1x</span>
+			<button type="button" id="stoneAddWorker" class="btn btn-default btn-xs color-stone pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="stoneRemoveWorker" class="btn btn-default btn-xs color-stone pull-left">&nbsp;-&nbsp;</button>
+			<div id="stoneBarWrapper" class="progress">
+				<div id="stoneBar" class="progress-bar color-stone" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="stoneSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="stoneSupplyBar" class="progress-bar color-stone" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="stoneExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="stoneExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="tools1Div" class="invisible">
+			<!-- tools -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will create and maintain an arsenel of Cutting Tools.<br>Boosts <label class='text-highlight-color'>Stone</label> and <label class='text-highlight-color'>Wood</label>.">
+				Cut Tools L${currencies.tools1.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.tools1.workers}
+				</div>
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.tools1.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.tools1.supply}/${currencies.tools1.maxSupply}
+				</div>
+			</div>
+			<button type="button" id="tools1AddWorker" class="btn btn-default btn-xs color-tools1 pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="tools1RemoveWorker" class="btn btn-default btn-xs color-tools1 pull-left">&nbsp;-&nbsp;</button>
+			<div id="tools1BarWrapper" class="progress">
+				<div id="tools1Bar" class="progress-bar color-tools1" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="tools1SupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="tools1SupplyBar" class="progress-bar color-tools1" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="tools1ExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="tools1ExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="woodDiv">
+			<!-- wood -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will gather wood from the forest.<br>Receives boosts from <label class='text-highlight-color'>Forest</label> and <label class='text-highlight-color'>Cut Tools</label>.<br>Sells to <label class='text-highlight-color'>Commodity Sales</label>">
+				Wood L${currencies.wood.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.wood.workers}
+				</div>
+				<div class="col-lg-6">
+					Price: $${currencies.wood.unitPrice}
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.wood.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.wood.supply}/${currencies.wood.maxSupply}
+				</div>
+			</div>
+			<span id="woodBadge" data-toggle="tooltip" data-original-title="Current synergy bonus" class="label label-default pull-right">1x</span>
+			<button type="button" id="woodAddWorker" class="btn btn-default btn-xs color-wood pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="woodRemoveWorker" class="btn btn-default btn-xs color-wood pull-left">&nbsp;-&nbsp;</button>
+			<div id="woodBarWrapper" class="progress">
+				<div id="woodBar" class="progress-bar color-wood" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="woodSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="woodSupplyBar" class="progress-bar color-wood" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="woodExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="woodExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-1"></div>
+	<div class="col-lg-2">
+		<br/>
+		<a id="helpButton" href="./help.html" target="_blank" role="button" class="btn btn-default color-sales">How do I Play&#63;</a>
+	</div>
+</div>
+<div class="row row-margin">
+	<div class="col-lg-1"></div>
+	<div class="col-lg-1"></div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="mountainDiv" class="invisible">
+			<!-- mountain -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will expedite the gathering of stone and ore.<br>Boosts <label class='text-highlight-color'>Ore</label> and <label class='text-highlight-color'>Stone</label>">
+				Mountain L${currencies.mountain.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.mountain.workers}
+				</div>
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.mountain.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.mountain.supply}/${currencies.mountain.maxSupply}
+				</div>
+			</div>
+			<button type="button" id="mountainAddWorker" class="btn btn-default btn-xs color-mountain pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="mountainRemoveWorker" class="btn btn-default btn-xs color-mountain pull-left">&nbsp;-&nbsp;</button>
+			<div id="mountainBarWrapper" class="progress">
+				<div id="mountainBar" class="progress-bar color-mountain" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="mountainSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="mountainSupplyBar" class="progress-bar color-mountain" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="mountainExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="mountainExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	<div id="salesMultiplierPanel" class="col-lg-4 col-sm-4 text-center invisible">
+		<h3 class="text-center bindto-player">Sales Multiplier: x${rating}</h3>
+		Ticks: <p class="bindto-player">${ticks}</p>
+	</div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="forestDiv">
+			<!-- forest -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will expedite the gathering of wood and rubber.<br>Boosts <label class='text-highlight-color'>Wood</label> and <label class='text-highlight-color'>Rubber</label>">
+				Forest L${currencies.forest.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.forest.workers}
+				</div>
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.forest.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.forest.supply}/${currencies.forest.maxSupply}
+				</div>
+			</div>
+			<button type="button" id="forestAddWorker" class="btn btn-default btn-xs color-forest pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="forestRemoveWorker" class="btn btn-default btn-xs color-forest pull-left">&nbsp;-&nbsp;</button>
+			<div id="forestBarWrapper" class="progress">
+				<div id="forestBar" class="progress-bar color-forest" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="forestSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="forestSupplyBar" class="progress-bar color-forest" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="forestExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="forestExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-1"></div>
+</div>
+<div class="row row-margin">
+	<div class="col-lg-1"></div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="oreDiv" class="invisible">
+			<!-- ore -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will gather ore from the mountain.<br>Receives boosts from <label class='text-highlight-color'>Mountain</label> and <label class='text-highlight-color'>Heat Tools</label>.<br>Sells to <label class='text-highlight-color'>Commodity Sales</label>">
+				Ore L${currencies.ore.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.ore.workers}
+				</div>
+				<div class="col-lg-6">
+					Price: $${currencies.ore.unitPrice}
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.ore.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.ore.supply}/${currencies.ore.maxSupply}
+				</div>
+			</div>
+			<span id="oreBadge" data-toggle="tooltip" data-original-title="Current synergy bonus" class="label label-default pull-right">1x</span>
+			<button type="button" id="oreAddWorker" class="btn btn-default btn-xs color-ore pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="oreRemoveWorker" class="btn btn-default btn-xs color-ore pull-left">&nbsp;-&nbsp;</button>
+			<div id="oreBarWrapper" class="progress">
+				<div id="oreBar" class="progress-bar color-ore" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="oreSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="oreSupplyBar" class="progress-bar color-ore" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="oreExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="oreExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+		<div id="tools4Div" class="invisible">
+			<!-- tools4 -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will create and maintain an arsenel of Heat Tools.<br>Boosts <label class='text-highlight-color'>Ore</label> and <label class='text-highlight-color'>Mystery</label>.">
+				Heat Tools L${currencies.tools4.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.tools4.workers}
+				</div>
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.tools4.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.tools4.supply}/${currencies.tools4.maxSupply}
+				</div>
+			</div>
+			<button type="button" id="tools4AddWorker" class="btn btn-default btn-xs color-tools4 pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="tools4RemoveWorker" class="btn btn-default btn-xs color-tools4 pull-left">&nbsp;-&nbsp;</button>
+			<div id="tools4BarWrapper" class="progress">
+				<div id="tools4Bar" class="progress-bar color-tools4" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="tools4SupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="tools4SupplyBar" class="progress-bar color-tools4" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="tools4ExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="tools4ExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+		<div id="mysteryDiv" class="invisible">
+			<!-- mystery -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will gather mystery from the ocean.<br>Receives boosts from <label class='text-highlight-color'>Ocean</label> and <label class='text-highlight-color'>Heat Tools</label>.<br>Sells to <label class='text-highlight-color'>Functional Sales</label>">
+				Mystery L${currencies.mystery.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.mystery.workers}
+				</div>
+				<div class="col-lg-6">
+					Price: $${currencies.mystery.unitPrice}
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.mystery.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.mystery.supply}/${currencies.mystery.maxSupply}
+				</div>
+			</div>
+			<span id="mysteryBadge" data-toggle="tooltip" data-original-title="Current synergy bonus" class="label label-default pull-right">1x</span>
+			<button type="button" id="mysteryAddWorker" class="btn btn-default btn-xs color-mystery pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="mysteryRemoveWorker" class="btn btn-default btn-xs color-mystery pull-left">&nbsp;-&nbsp;</button>
+			<div id="mysteryBarWrapper" class="progress">
+				<div id="mysteryBar" class="progress-bar color-mystery" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="mysterySupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="mysterySupplyBar" class="progress-bar color-mystery" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="mysteryExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="mysteryExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<div id="upgradePanel" class="col-lg-2 well well-sm invisible" style="overflow-y: scroll; height: 380px;">
+		<div id="upgrade1" data-toggle="tooltip" data-placement="top" data-original-title="Example text" class="upgrade-item">
+			<span id="upgrade1Icon" class="glyphicon"></span>
+			<label id="upgrade1Label">Example Upgrade #1</label>
+			<button id="upgrade1Button" class="btn btn-default btn-sm btn-upgrade pull-right">$1,200</button>
+		</div>
+		<div id="upgrade2" data-toggle="tooltip" data-placement="top" data-original-title="Example text" class="upgrade-item">
+			<span id="upgrade2Icon" class="glyphicon"></span>
+			<label id="upgrade2Label">Example Upgrade #2</label>
+			<button id="upgrade2Button" class="btn btn-default btn-sm btn-upgrade pull-right">$1,200</button>
+		</div>
+		<div id="upgrade3" data-toggle="tooltip" data-placement="top" data-original-title="Example text" class="upgrade-item">
+			<span id="upgrade3Icon" class="glyphicon"></span>
+			<label id="upgrade3Label">Example Upgrade #3</label>
+			<button id="upgrade3Button" class="btn btn-default btn-sm btn-upgrade pull-right">$1,200</button>
+		</div>
+		<div id="upgrade4" data-toggle="tooltip" data-placement="top" data-original-title="Example text" class="upgrade-item">
+			<span id="upgrade4Icon" class="glyphicon"></span>
+			<label id="upgrade4Label">Example Upgrade #4</label>
+			<button id="upgrade4Button" class="btn btn-default btn-sm btn-upgrade pull-right">$1,200</button>
+		</div>
+		<div id="upgrade5" data-toggle="tooltip" data-placement="top" data-original-title="It's a secret to everybody!" class="upgrade-item upgrade-item-disabled">
+			<span id="upgrade5Icon" class="glyphicon glyphicon-question-sign"></span>
+			<label id="upgrade5Label">???</label>
+		</div>
+
+	</div>
+	
+	
+	<div class="col-lg-2 col-sm-4">
+		<div id="sales1Div" class="invisible">
+			<!-- sales1 -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will transport and sell top-side goods.<br>Sells <label class='text-highlight-color'>Stone</label>, <label class='text-highlight-color'>Ore</label>, <label class='text-highlight-color'>Wood</label> and <label class='text-highlight-color'>Rubber</label>">
+				Commodity Sales L${currencies.sales1.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.sales1.workers}
+				</div>
+				<div class="col-lg-6">
+					Last Sale: $${currencies.sales1.lastSale}
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.sales1.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.sales1.supply}/${currencies.sales1.maxSupply}
+				</div>
+			</div>
+			<button type="button" id="sales1AddWorker" class="btn btn-default btn-xs color-sales1 pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="sales1RemoveWorker" class="btn btn-default btn-xs color-sales1 pull-left">&nbsp;-&nbsp;</button>
+			<div id="sales1BarWrapper" class="progress">
+				<div id="sales1Bar" class="progress-bar color-sales1" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="sales1SupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="sales1SupplyBar" class="progress-bar color-sales1" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="sales1ExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="sales1ExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+		<div class="bindto-player text-center well well-sm">
+			<button type="button" id="clickMoney" class="btn btn-default btn-md" style="width: 160px;"><b>Earn Money</b></button> <br>
+			<button type="button" id="clickHireWorker" class="btn btn-default btn-md" style="width: 160px;">Buy Worker $${workerCost}</button> <br>
+			<h4>Current money: $${currencies.money.supply}</h4>
+			${workers} workers, ${workersUsed} used
+		</div>
+		<div id="sales2Div" class="invisible">
+			<!-- sales2 -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will transport and sell bottom-side goods.<br>Sells <label class='text-highlight-color'>Mystery</label>, <label class='text-highlight-color'>Oil</label>, <label class='text-highlight-color'>Livestock</label> and <label class='text-highlight-color'>Food</label>">
+				Functional Sales L${currencies.sales2.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.sales2.workers}
+				</div>
+				<div class="col-lg-6">
+					Last Sale: $${currencies.sales2.lastSale}
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.sales2.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.sales2.supply}/${currencies.sales2.maxSupply}
+				</div>
+			</div>
+			<button type="button" id="sales2AddWorker" class="btn btn-default btn-xs color-sales2 pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="sales2RemoveWorker" class="btn btn-default btn-xs color-sales2 pull-left">&nbsp;-&nbsp;</button>
+			<div id="sales2BarWrapper" class="progress">
+				<div id="sales2Bar" class="progress-bar color-sales2" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="sales2SupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="sales2SupplyBar" class="progress-bar color-sales2" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="sales2ExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="sales2ExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<!-- Output Console -->
+	<div id="output" class="col-lg-2 well well-sm invisible" style="overflow-y: scroll; height: 380px;">
+	</div>
+	
+	
+	<div class="col-lg-2 col-sm-4">
+		<div id="rubberDiv" class="invisible">
+			<!-- rubber -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will gather rubber from the forest.<br>Receives boosts from <label class='text-highlight-color'>Forest</label> and <label class='text-highlight-color'>Moto Tools</label>.<br>Sells to <label class='text-highlight-color'>Commodity Sales</label>">
+				Rubber L${currencies.rubber.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.rubber.workers}
+				</div>
+				<div class="col-lg-6">
+					Price: $${currencies.rubber.unitPrice}
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.rubber.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.rubber.supply}/${currencies.rubber.maxSupply}
+				</div>
+			</div>
+			<span id="rubberBadge" data-toggle="tooltip" data-original-title="Current synergy bonus" class="label label-default pull-right">1x</span>
+			<button type="button" id="rubberAddWorker" class="btn btn-default btn-xs color-rubber pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="rubberRemoveWorker" class="btn btn-default btn-xs color-rubber pull-left">&nbsp;-&nbsp;</button>
+			<div id="rubberBarWrapper" class="progress">
+				<div id="rubberBar" class="progress-bar color-rubber" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="rubberSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="rubberSupplyBar" class="progress-bar color-rubber" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="rubberExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="rubberExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+		<div id="tools2Div" class="invisible">
+			<!-- tools2 -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will create and maintain an arsenel of Motorized Tools.<br>Boosts <label class='text-highlight-color'>Rubber</label> and <label class='text-highlight-color'>Food</label>.">
+				Moto Tools L${currencies.tools2.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.tools2.workers}
+				</div>
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.tools2.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.tools2.supply}/${currencies.tools2.maxSupply}
+				</div>
+			</div>
+			<button type="button" id="tools2AddWorker" class="btn btn-default btn-xs color-tools2 pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="tools2RemoveWorker" class="btn btn-default btn-xs color-tools2 pull-left">&nbsp;-&nbsp;</button>
+			<div id="tools2BarWrapper" class="progress">
+				<div id="tools2Bar" class="progress-bar color-tools2" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="tools2SupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="tools2SupplyBar" class="progress-bar color-tools2" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="tools2ExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="tools2ExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+		<div id="foodDiv" class="invisible">
+			<!-- food -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will gather food from the prairie.<br>Receives boosts from <label class='text-highlight-color'>Prairie</label> and <label class='text-highlight-color'>Moto Tools</label>.<br>Sells to <label class='text-highlight-color'>Functional Sales</label>">
+				Food L${currencies.food.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.food.workers}
+				</div>
+				<div class="col-lg-6">
+					Price: $${currencies.food.unitPrice}
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.food.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.food.supply}/${currencies.food.maxSupply}
+				</div>
+			</div>
+			<span id="foodBadge" data-toggle="tooltip" data-original-title="Current synergy bonus" class="label label-default pull-right">1x</span>
+			<button type="button" id="foodAddWorker" class="btn btn-default btn-xs color-food pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="foodRemoveWorker" class="btn btn-default btn-xs color-food pull-left">&nbsp;-&nbsp;</button>
+			<div id="foodBarWrapper" class="progress">
+				<div id="foodBar" class="progress-bar color-food" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="foodSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="foodSupplyBar" class="progress-bar color-food" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="foodExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="foodExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row row-margin">
+	<div class="col-lg-1"></div>
+	<div class="col-lg-1"></div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="oceanDiv" class="invisible">
+			<!-- ocean -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will expedite the gathering of oil and mystery.<br>Boosts <label class='text-highlight-color'>Oil</label> and <label class='text-highlight-color'>Mystery</label>">
+				Ocean L${currencies.ocean.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.ocean.workers}
+				</div>
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.ocean.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.ocean.supply}/${currencies.ocean.maxSupply}
+				</div>
+			</div>
+			<button type="button" id="oceanAddWorker" class="btn btn-default btn-xs color-ocean pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="oceanRemoveWorker" class="btn btn-default btn-xs color-ocean pull-left">&nbsp;-&nbsp;</button>
+			<div id="oceanBarWrapper" class="progress">
+				<div id="oceanBar" class="progress-bar color-ocean" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="oceanSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="oceanSupplyBar" class="progress-bar color-ocean" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="oceanExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="oceanExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4"></div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="prairieDiv" class="invisible">
+			<!-- prairie -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will expedite the farming of food and raising of livestock.<br>Boosts <label class='text-highlight-color'>Food</label> and <label class='text-highlight-color'>Livestock</label>">
+				Prairie L${currencies.prairie.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.prairie.workers}
+				</div>
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.prairie.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.prairie.supply}/${currencies.prairie.maxSupply}
+				</div>
+			</div>
+			<button type="button" id="prairieAddWorker" class="btn btn-default btn-xs color-prairie pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="prairieRemoveWorker" class="btn btn-default btn-xs color-prairie pull-left">&nbsp;-&nbsp;</button>
+			<div id="prairieBarWrapper" class="progress">
+				<div id="prairieBar" class="progress-bar color-prairie" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="prairieSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="prairieSupplyBar" class="progress-bar color-prairie" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="prairieExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="prairieExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-1"></div>
+</div>
+<div class="row row-margin">
+	<div class="col-lg-1"></div>
+	<div class="col-lg-2"></div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="oilDiv" class="invisible">
+			<!-- oil -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will gather oil from the ocean.<br>Receives boosts from <label class='text-highlight-color'>Ocean</label> and <label class='text-highlight-color'>Aqua Tools</label>.<br>Sells to <label class='text-highlight-color'>Functional Sales</label>">
+				Oil L${currencies.oil.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.oil.workers}
+				</div>
+				<div class="col-lg-6">
+					Price: $${currencies.oil.unitPrice}
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.oil.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.oil.supply}/${currencies.oil.maxSupply}
+				</div>
+			</div>
+			<span id="oilBadge" data-toggle="tooltip" data-original-title="Current synergy bonus" class="label label-default pull-right">1x</span>
+			<button type="button" id="oilAddWorker" class="btn btn-default btn-xs color-oil pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="oilRemoveWorker" class="btn btn-default btn-xs color-oil pull-left">&nbsp;-&nbsp;</button>
+			<div id="oilBarWrapper" class="progress">
+				<div id="oilBar" class="progress-bar color-oil" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="oilSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="oilSupplyBar" class="progress-bar color-oil" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="oilExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="oilExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="tools3Div" class="invisible">
+			<!-- tools3 -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will create and maintain an arsenel of Aqua Tools.<br>Boosts <label class='text-highlight-color'>Livestock</label> and <label class='text-highlight-color'>Oil</label>.">
+				Aqua Tools L${currencies.tools3.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.tools3.workers}
+				</div>
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.tools3.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.tools3.supply}/${currencies.tools3.maxSupply}
+				</div>
+			</div>
+			<button type="button" id="tools3AddWorker" class="btn btn-default btn-xs color-tools3 pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="tools3RemoveWorker" class="btn btn-default btn-xs color-tools3 pull-left">&nbsp;-&nbsp;</button>
+			<div id="tools3BarWrapper" class="progress">
+				<div id="tools3Bar" class="progress-bar color-tools3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="tools3SupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="tools3SupplyBar" class="progress-bar color-tools3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="tools3ExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="tools3ExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-2 col-sm-4">
+		<div id="livestockDiv" class="invisible">
+			<!-- livestock -->
+			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
+				data-original-title="Workers will raise livestock from the prairie.<br>Receives boosts from <label class='text-highlight-color'>Prairie</label> and <label class='text-highlight-color'>Aqua Tools</label>.<br>Sells to <label class='text-highlight-color'>Functional Sales</label>">
+				Livestock L${currencies.livestock.level}
+			</h4>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Workers: ${currencies.livestock.workers}
+				</div>
+				<div class="col-lg-6">
+					Price: $${currencies.livestock.unitPrice}
+				</div>
+			</div>
+			<div class="row bindto-player">
+				<div class="col-lg-6">
+					Speed: ${currencies.livestock.computedSpeed}
+				</div>
+				<div class="col-lg-6">
+					Supply: ${currencies.livestock.supply}/${currencies.livestock.maxSupply}
+				</div>
+			</div>
+			<span id="livestockBadge" data-toggle="tooltip" data-original-title="Current synergy bonus" class="label label-default pull-right">1x</span>
+			<button type="button" id="livestockAddWorker" class="btn btn-default btn-xs color-livestock pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="livestockRemoveWorker" class="btn btn-default btn-xs color-livestock pull-left">&nbsp;-&nbsp;</button>
+			<div id="livestockBarWrapper" class="progress">
+				<div id="livestockBar" class="progress-bar color-livestock" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			</div>
+			<div id="livestockSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="livestockSupplyBar" class="progress-bar color-livestock" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+			<div id="livestockExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="livestockExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-2"></div>
+</div>
+<div class="row row-margin">
+	<div class="col-lg-8"></div>
+	<div class="col-lg-2">
+		<button type="button" id="saveGame" class="btn btn-default color-food pull-left">Save Game</button>
+		<button type="button" id="loadGame" class="btn btn-default color-mountain pull-left">Load Game</button>
+	</div>
+	<div class="col-lg-2">
+		<button type="button" id="workMode" class="btn btn-default color-stone pull-left">Work Mode</button>
+		<button type="button" id="nightMode" class="btn btn-default color-stone pull-left">Night Mode</button>
+		<button type="button" id="superDevMode" class="btn btn-default color-stone pull-left">Top Secret Dev Mode</button>
+	</div>
+</div>
+
+</body>
+</html>
