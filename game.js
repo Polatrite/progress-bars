@@ -1,35 +1,3 @@
-	
-/*var logger = window.console.log;
-var console = {
-	log: function(msg) {
-		var $elem = $('#output');
-		var contents = $elem.html();
-		contents += msg + "<br/>";
-		$elem.html(contents);
-		logger(msg);
-	}
-}
-window.console = console;
-*/
-/*console.log = (function() {
-    var log = console.log;
-
-    return function(exception) {
-        if (typeof exception.stack !== 'undefined') {
-            log.call(console, exception.stack);
-        } else {
-            log.apply(console, arguments);
-            if(arguments.length > 0) {
-				var $elem = $('#output');
-				var contents = $elem.html();
-				contents += arguments[0]+ "<br/>";
-				$elem.html(contents);
-				$elem.scrollTop($elem[0].scrollHeight);
-            }
-        }
-    }
-})();*/
-
 var upgrades = {
 	doubleClicker: {
 		id: 'doubleClicker',
@@ -504,46 +472,46 @@ function initialize() {
 	$('#clickAuto').click(clickAuto);
 	$('#clickMoney').click(clickMoney);
 	$('#clickHireWorker').click(hireWorker);
-	$('#nightMode').click(function() {
-	    var $elem = $('body');
-	    
-	    if($elem.hasClass('night-theme')) {
-		    $elem.removeClass('night-theme');
-	    }
-	    else {
-		    $elem.addClass('night-theme');
-	    }
-	});
-	$('#workMode').click(function() {
-	    var $elem = $('body');
-	    
-	    if($elem.hasClass('work-theme')) {
-		    $('body').removeClass('work-theme');
-	    }
-	    else {
-		    $('body').addClass('work-theme');
-	    }
-	});
-	$('#superDevMode').click(function() {
-		$('div').removeClass('invisible');
-		clickAuto();
-	});
+	$('#nightMode').click(toggleNightMode);
+	$('#workMode').click(toggleWorkMode);
 	$('#saveGame').click(saveGame);
 	$('#loadGame').click(loadGame);
 	_.each([1,2,3,4], function(count) {
 		$('#upgrade' + count + 'Button').click(function() { buyUpgrade(count); });
 	});
+	$('#superDevMode').click(function() {
+		$('div').removeClass('invisible');
+		clickAuto();
+	});
 	
 	currentGameLoop = setInterval(gameLoop, 100);
 
-	/*
-	morpheus($('#woodBar'), { 
-	    width: '100%', 
-	    duration: 1000,
-	    easing: morpheus.easings.bounce
-	});
-	*/
-	
+	// Hack to enable the dev button only on dev servers
+	var url = window.location.href;
+	if(url.indexOf('polatrite.c9') > -1) {
+		$('#superDevMode').removeClass('invisible');
+	}
+}
+function toggleNightMode() {
+    var $elem = $('body');
+    
+    if($elem.hasClass('night-theme')) {
+	    $elem.removeClass('night-theme');
+    }
+    else {
+	    $elem.addClass('night-theme');
+    }
+}
+
+function toggleWorkMode() {
+    var $elem = $('body');
+    
+    if($elem.hasClass('work-theme')) {
+	    $('body').removeClass('work-theme');
+    }
+    else {
+	    $('body').addClass('work-theme');
+    }
 }
 
 function buyUpgrade(slot) {

@@ -1,7 +1,7 @@
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Progress Bars v0.00000001</title>
+	<title>Progress Bars v1.0.0</title>
 	<script src="lib/underscore.min.js" text="type/javascript"></script>
 	<script src="lib/jquery.min.js" text="type/javascript"></script>
 	<script src="lib/jquery.cookie.js" text="type/javascript"></script>
@@ -24,14 +24,49 @@ window.addEventListener('load', function() {
     FastClick.attach(document.body);
 }, false);
 
+	
+/*var logger = window.console.log;
+var console = {
+	log: function(msg) {
+		var $elem = $('#output');
+		var contents = $elem.html();
+		contents += msg + "<br/>";
+		$elem.html(contents);
+		logger(msg);
+	}
+}
+window.console = console;
+*/
+/*console.log = (function() {
+    var log = console.log;
+
+    return function(exception) {
+        if (typeof exception.stack !== 'undefined') {
+            log.call(console, exception.stack);
+        } else {
+            log.apply(console, arguments);
+            if(arguments.length > 0) {
+				var $elem = $('#output');
+				var contents = $elem.html();
+				contents += arguments[0]+ "<br/>";
+				$elem.html(contents);
+				$elem.scrollTop($elem[0].scrollHeight);
+            }
+        }
+    }
+})();*/
+
 	</script>
 
 </head>
 <body class="bindto-player container-fluid">
 
-<div class="row">
-	<div class="col-lg-1"></div>
-	<div class="col-lg-3 bindto-player">
+<div class="row" style="margin-top: 10px;">
+	<div class="col-lg-4 col-lg-offset-4">
+		<div class="alert alert-danger alert-dismissible" role="alert">
+		<B>Warning:</B> Saving and loading is currently MANUAL! Be sure to save before you close the window!
+		<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		</div>
 	</div>
 </div>
 
@@ -759,7 +794,7 @@ window.addEventListener('load', function() {
 	<div class="col-lg-2">
 		<button type="button" id="workMode" class="btn btn-default color-stone pull-left">Work Mode</button>
 		<button type="button" id="nightMode" class="btn btn-default color-stone pull-left">Night Mode</button>
-		<button type="button" id="superDevMode" class="btn btn-default color-stone pull-left">Top Secret Dev Mode</button>
+		<button type="button" id="superDevMode" class="invisible btn btn-default color-stone pull-left">Top Secret Dev Mode</button>
 	</div>
 </div>
 
