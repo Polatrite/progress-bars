@@ -5,7 +5,7 @@
 	<script src="lib/underscore.min.js" text="type/javascript"></script>
 	<script src="lib/jquery.min.js" text="type/javascript"></script>
 	<script src="lib/jquery.cookie.js" text="type/javascript"></script>
-	<script src="lib/bootstrap/js/bootstrap.min.js" text="type/javascript"></script>
+	<script src="lib/bootstrap/js/bootstrap.js" text="type/javascript"></script>
 	<script src="lib/iugo.js" text="type/javascript"></script>
 	<script src="lib/fastclick.js" text="type/javascript"></script>
 	<script src="game.js" text="type/javascript"></script>
@@ -61,15 +61,30 @@ window.console = console;
 </head>
 <body class="bindto-player container-fluid">
 
-<div class="row" style="margin-top: 10px;">
-	<div class="col-lg-4 col-lg-offset-4">
-		<div class="alert alert-danger alert-dismissible" role="alert">
-		<B>Warning:</B> Saving and loading is currently MANUAL! Be sure to save before you close the window!
-		<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+<!-- Modal -->
+<div class="modal fade" id="saveLoadModal" tabindex="-1" role="dialog" aria-labelledby="saveLoadModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="saveLoadModalLabel">Save/Load via Text</h4>
+			</div>
+			<div class="modal-body">
+				<label>To save, simply copy the following text and save it as a text file on your computer.</label>
+				<textarea id="saveTextData" style="width: 100%; height: 10em; font-size: 1em;"></textarea>
+				<button id="selectSaveTextData" type="button" class="btn btn-default">Select All Text</button>
+				<hr>
+				<label>To load, paste your text file into this block, then click "Load Text Data".</label>
+				<textarea id="loadTextData" style="width: 100%; height: 10em; font-size: 1em;"></textarea>
+				<div id="loadTextDataFailedAlert" class="alert alert-danger hidden">We had trouble loading your text data. Please make sure your data is valid and try again!</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button id="loadTextSaveData" type="button" class="btn btn-primary">Load Text Data</button>
+			</div>
 		</div>
 	</div>
 </div>
-
 
 <div class="row row-margin">
 	<div class="col-lg-1"></div>
@@ -193,7 +208,7 @@ window.console = console;
 	<div class="col-lg-1"></div>
 	<div class="col-lg-1"></div>
 	<div class="col-lg-2 col-sm-4">
-		<div id="mountainDiv" class="invisible">
+		<div id="mountainDiv" class="invisible well well-xs color-mountain-light">
 			<!-- mountain -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
 				data-original-title="Workers will expedite the gathering of stone and ore.<br>Boosts <label class='text-highlight-color'>Ore</label> and <label class='text-highlight-color'>Stone</label>">
@@ -229,10 +244,9 @@ window.console = console;
 	</div>
 	<div id="salesMultiplierPanel" class="col-lg-4 col-sm-4 text-center invisible">
 		<h3 class="text-center bindto-player">Sales Multiplier: x${rating}</h3>
-		Ticks: <p class="bindto-player">${ticks}</p>
 	</div>
 	<div class="col-lg-2 col-sm-4">
-		<div id="forestDiv">
+		<div id="forestDiv" class="well well-xs color-forest-light">
 			<!-- forest -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
 				data-original-title="Workers will expedite the gathering of wood and rubber.<br>Boosts <label class='text-highlight-color'>Wood</label> and <label class='text-highlight-color'>Rubber</label>">
@@ -309,7 +323,7 @@ window.console = console;
 		<div id="tools4Div" class="invisible">
 			<!-- tools4 -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
-				data-original-title="Workers will create and maintain an arsenel of Heat Tools.<br>Boosts <label class='text-highlight-color'>Ore</label> and <label class='text-highlight-color'>Mystery</label>.">
+				data-original-title="Workers will create and maintain an arsenel of Heat Tools.<br>Boosts <label class='text-highlight-color'>Ore</label> and <label class='text-highlight-color'>Coral</label>.">
 				Heat Tools L${currencies.tools4.level}
 			</h4>
 			<div class="row bindto-player">
@@ -339,39 +353,39 @@ window.console = console;
 				<div id="tools4ExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
 			</div>
 		</div>
-		<div id="mysteryDiv" class="invisible">
-			<!-- mystery -->
+		<div id="coralDiv" class="invisible">
+			<!-- coral -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
-				data-original-title="Workers will gather mystery from the ocean.<br>Receives boosts from <label class='text-highlight-color'>Ocean</label> and <label class='text-highlight-color'>Heat Tools</label>.<br>Sells to <label class='text-highlight-color'>Functional Sales</label>">
-				Mystery L${currencies.mystery.level}
+				data-original-title="Workers will gather coral from the ocean.<br>Receives boosts from <label class='text-highlight-color'>Ocean</label> and <label class='text-highlight-color'>Heat Tools</label>.<br>Sells to <label class='text-highlight-color'>Functional Sales</label>">
+				Coral L${currencies.coral.level}
 			</h4>
 			<div class="row bindto-player">
 				<div class="col-lg-6">
-					Workers: ${currencies.mystery.workers}
+					Workers: ${currencies.coral.workers}
 				</div>
 				<div class="col-lg-6">
-					Price: $${currencies.mystery.unitPrice}
+					Price: $${currencies.coral.unitPrice}
 				</div>
 			</div>
 			<div class="row bindto-player">
 				<div class="col-lg-6">
-					Speed: ${currencies.mystery.computedSpeed}
+					Speed: ${currencies.coral.computedSpeed}
 				</div>
 				<div class="col-lg-6">
-					Supply: ${currencies.mystery.supply}/${currencies.mystery.maxSupply}
+					Supply: ${currencies.coral.supply}/${currencies.coral.maxSupply}
 				</div>
 			</div>
-			<span id="mysteryBadge" data-toggle="tooltip" data-original-title="Current synergy bonus" class="label label-default pull-right">1x</span>
-			<button type="button" id="mysteryAddWorker" class="btn btn-default btn-xs color-mystery pull-left">&nbsp;+&nbsp;</button>
-			<button type="button" id="mysteryRemoveWorker" class="btn btn-default btn-xs color-mystery pull-left">&nbsp;-&nbsp;</button>
-			<div id="mysteryBarWrapper" class="progress">
-				<div id="mysteryBar" class="progress-bar color-mystery" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+			<span id="coralBadge" data-toggle="tooltip" data-original-title="Current synergy bonus" class="label label-default pull-right">1x</span>
+			<button type="button" id="coralAddWorker" class="btn btn-default btn-xs color-coral pull-left">&nbsp;+&nbsp;</button>
+			<button type="button" id="coralRemoveWorker" class="btn btn-default btn-xs color-coral pull-left">&nbsp;-&nbsp;</button>
+			<div id="coralBarWrapper" class="progress">
+				<div id="coralBar" class="progress-bar color-coral" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
 			</div>
-			<div id="mysterySupplyBarWrapper" class="progress" style="height: 6px;">
-				<div id="mysterySupplyBar" class="progress-bar color-mystery" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			<div id="coralSupplyBarWrapper" class="progress" style="height: 6px;">
+				<div id="coralSupplyBar" class="progress-bar color-coral" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
 			</div>
-			<div id="mysteryExpBarWrapper" class="progress" style="height: 6px;">
-				<div id="mysteryExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
+			<div id="coralExpBarWrapper" class="progress" style="height: 6px;">
+				<div id="coralExpBar" class="progress-bar color-exp" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
 			</div>
 		</div>
 	</div>
@@ -450,7 +464,7 @@ window.console = console;
 		<div id="sales2Div" class="invisible">
 			<!-- sales2 -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
-				data-original-title="Workers will transport and sell bottom-side goods.<br>Sells <label class='text-highlight-color'>Mystery</label>, <label class='text-highlight-color'>Oil</label>, <label class='text-highlight-color'>Livestock</label> and <label class='text-highlight-color'>Food</label>">
+				data-original-title="Workers will transport and sell bottom-side goods.<br>Sells <label class='text-highlight-color'>Coral</label>, <label class='text-highlight-color'>Oil</label>, <label class='text-highlight-color'>Livestock</label> and <label class='text-highlight-color'>Food</label>">
 				Functional Sales L${currencies.sales2.level}
 			</h4>
 			<div class="row bindto-player">
@@ -599,10 +613,10 @@ window.console = console;
 	<div class="col-lg-1"></div>
 	<div class="col-lg-1"></div>
 	<div class="col-lg-2 col-sm-4">
-		<div id="oceanDiv" class="invisible">
+		<div id="oceanDiv" class="invisible well well-xs color-ocean-light">
 			<!-- ocean -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
-				data-original-title="Workers will expedite the gathering of oil and mystery.<br>Boosts <label class='text-highlight-color'>Oil</label> and <label class='text-highlight-color'>Mystery</label>">
+				data-original-title="Workers will expedite the gathering of oil and coral.<br>Boosts <label class='text-highlight-color'>Oil</label> and <label class='text-highlight-color'>Coral</label>">
 				Ocean L${currencies.ocean.level}
 			</h4>
 			<div class="row bindto-player">
@@ -635,7 +649,7 @@ window.console = console;
 	</div>
 	<div class="col-lg-4"></div>
 	<div class="col-lg-2 col-sm-4">
-		<div id="prairieDiv" class="invisible">
+		<div id="prairieDiv" class="invisible well well-xs color-prairie-light">
 			<!-- prairie -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
 				data-original-title="Workers will expedite the farming of food and raising of livestock.<br>Boosts <label class='text-highlight-color'>Food</label> and <label class='text-highlight-color'>Livestock</label>">
@@ -788,13 +802,15 @@ window.console = console;
 <div class="row row-margin">
 	<div class="col-lg-8"></div>
 	<div class="col-lg-2">
-		<button type="button" id="saveGame" class="btn btn-default color-food pull-left">Save Game</button>
-		<button type="button" id="loadGame" class="btn btn-default color-mountain pull-left">Load Game</button>
+		<button type="button" id="resetGame" class="btn btn-default color-coral pull-left">Reset Game</button>
+		<button type="button" id="saveGame" class="btn btn-default color-food pull-left hidden">Save Game</button>
+		<button type="button" id="loadGame" class="btn btn-default color-mountain pull-left hidden">Load Game</button>
+		<button type="button" id="saveGameTextExport" class="btn btn-default color-food pull-left" data-toggle="modal" data-target="#saveLoadModal">Save/Load via Text</button>
 	</div>
 	<div class="col-lg-2">
 		<button type="button" id="workMode" class="btn btn-default color-stone pull-left">Work Mode</button>
 		<button type="button" id="nightMode" class="btn btn-default color-stone pull-left">Night Mode</button>
-		<button type="button" id="superDevMode" class="invisible btn btn-default color-stone pull-left">Top Secret Dev Mode</button>
+		<button type="button" id="superDevMode" class="btn btn-default color-stone pull-left hidden">Top Secret Dev Mode</button>
 	</div>
 </div>
 

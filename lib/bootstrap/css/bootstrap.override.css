@@ -19,3 +19,8 @@ h6,
 .well-sm {
     padding: 6px;
 }
+
+.well-xs {
+  padding: 4px;
+  border-radius: 2px;
+}

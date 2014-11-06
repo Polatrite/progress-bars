@@ -1,3 +1,7 @@
+var game = {
+	isResettingGame: false,
+	isDebugServer: false
+};
 var upgrades = {
 	doubleClicker: {
 		id: 'doubleClicker',
@@ -307,8 +311,8 @@ var currentGameLoop = null;
 var gameLoopCounter = 0;
 
 var model = null;
-var currencies = ['tools1', 'wood', 'forest', 'rubber', 'tools2', 'food', 'prairie', 'livestock', 'tools3', 'oil', 'ocean', 'mystery', 'tools4', 'ore', 'mountain', 'stone', 'sales1', 'sales2'];
-var soldCurrencies = ['wood', 'rubber', 'food', 'livestock', 'oil', 'mystery', 'ore', 'stone'];
+var currencies = ['tools1', 'wood', 'forest', 'rubber', 'tools2', 'food', 'prairie', 'livestock', 'tools3', 'oil', 'ocean', 'coral', 'tools4', 'ore', 'mountain', 'stone', 'sales1', 'sales2'];
+var soldCurrencies = ['wood', 'rubber', 'food', 'livestock', 'oil', 'coral', 'ore', 'stone'];
 var toolCurrencies = ['tools1', 'tools2', 'tools3', 'tools4'];
 var salesCurrencies = ['sales1', 'sales2'];
 var biomeCurrencies = ['forest', 'prairie', 'ocean', 'mountain'];
@@ -382,7 +386,7 @@ function initialize() {
 			case 'sales2':
 				curr.isSales = true;
 				curr.speed = 25;
-				curr.sellCurrencies = ['food', 'livestock', 'mystery', 'oil'];
+				curr.sellCurrencies = ['food', 'livestock', 'coral', 'oil'];
 				curr.sellRate = 50;
 				curr.transportRate = 50;
 				break;
@@ -438,7 +442,7 @@ function initialize() {
 				curr.sales = 'sales2';
 				break;
 
-			case 'mystery':
+			case 'coral':
 				curr.speed = 50;
 				curr.unitPrice = 8;
 				curr.bonusCurrencies = ['tools4', 'ocean'];
@@ -474,8 +478,14 @@ function initialize() {
 	$('#clickHireWorker').click(hireWorker);
 	$('#nightMode').click(toggleNightMode);
 	$('#workMode').click(toggleWorkMode);
-	$('#saveGame').click(saveGame);
-	$('#loadGame').click(loadGame);
+
+	$('#saveGame').click(saveGameToStorage);
+	$('#loadGame').click(loadGameFromStorage);
+	$('#saveGameTextExport').click(saveGameTextExport);
+	$('#loadTextSaveData').click(loadGameFromText);
+	$('#selectSaveTextData').click(selectSaveTextData);
+	$('#resetGame').click(resetGameConfirm);
+
 	_.each([1,2,3,4], function(count) {
 		$('#upgrade' + count + 'Button').click(function() { buyUpgrade(count); });
 	});
@@ -484,34 +494,178 @@ function initialize() {
 		clickAuto();
 	});
 	
+	window.onbeforeunload = function(evt) {
+		if(!game.isResettingGame) {
+			saveGameToStorage();
+			console.log('Game saved successfully?');
+		}
+	};
+	
+	loadGameFromStorage();
+	
 	currentGameLoop = setInterval(gameLoop, 100);
 
 	// Hack to enable the dev button only on dev servers
 	var url = window.location.href;
 	if(url.indexOf('polatrite.c9') > -1) {
-		$('#superDevMode').removeClass('invisible');
+		game.isDebugServer = true;
+		$('#superDevMode').removeClass('hidden');
+		$('#saveGame').removeClass('hidden');
+		$('#loadGame').removeClass('hidden');
 	}
 }
-function toggleNightMode() {
-    var $elem = $('body');
-    
-    if($elem.hasClass('night-theme')) {
-	    $elem.removeClass('night-theme');
-    }
-    else {
-	    $elem.addClass('night-theme');
-    }
+
+function rot13(s)
+{
+	return (s ? s : this).split('').map(function(_)
+	{
+		if (!_.match(/[A-za-z]/)) return _;
+		var c = Math.floor(_.charCodeAt(0) / 97);
+		var k = (_.toLowerCase().charCodeAt(0) - 83) % 26 || 26;
+		return String.fromCharCode(k + ((c == 0) ? 64 : 96));
+	}).join('');
 }
 
-function toggleWorkMode() {
-    var $elem = $('body');
-    
-    if($elem.hasClass('work-theme')) {
-	    $('body').removeClass('work-theme');
-    }
-    else {
-	    $('body').addClass('work-theme');
-    }
+function resetGameConfirm() {
+	var confirm = window.confirm("Are you sure you want to reset your game? This will delete all your data!");
+	if(confirm == true) {
+		localStorage.removeItem('player');
+		game.isResettingGame = true;
+		location.reload(true);
+	}
+}
+
+function selectSaveTextData() {
+	var $elem = $('#saveTextData');
+	$elem.focus();
+	$elem.select();
+}
+
+function saveGameTextExport() {
+	var playerStr = getSaveGameData();
+	playerStr = rot13(btoa(playerStr));
+
+	var $elem = $('#saveTextData');
+	$elem.val(playerStr);
+
+	$('#saveLoadModal').on('shown.bs.modal', selectSaveTextData);
+	
+	$('#loadTextData').val('');
+	$('#loadTextDataFailedAlert').addClass('hidden');
+	
+	console.log('Player save data added to text output');
+}
+
+function saveGameToStorage() {
+	var playerStr = getSaveGameData();
+
+	localStorage.setItem('player', playerStr);
+}
+
+function getSaveGameData() {
+	var curatedPlayer = {
+		currencies: {},
+		click: {
+		    power: player.click.power,
+		    throttle: player.click.throttle,
+		    throttlePerSecond: player.click.throttlePerSecond
+		},
+		workers: player.workers,
+		workersUsed: player.workersUsed,
+		workerCost: player.workerCost,
+		rating: player.rating,
+		
+		unlocks: player.unlocks,
+		upgrades: {},
+		
+		ticks: player.ticks,
+		totalTicks: player.totalTicks
+	};
+	
+	_.each(player.currencies, function(currency) {
+		curatedPlayer.currencies[currency.name] = {
+			level: currency.level,
+			exp: currency.exp,
+			exptnl: currency.exptnl,
+			
+			supply: currency.supply,
+			maxSupply: currency.maxSupply,
+			totalSupplyEarned: currency.totalSupplyEarned,
+			workers: currency.workers,
+			progress: currency.progress,
+
+			power: currency.power,
+			speed: currency.speed,
+			quantity: currency.quantity,
+			multiplier: currency.multiplier,
+
+			unitPrice: currency.unitPrice,
+			supplyCost: currency.supplyCost,
+			
+			name: currency.name
+		}
+	});
+
+    _.each(player.upgrades, function(upgrade) {
+        curatedPlayer.upgrades[upgrade.id] = true;
+    });
+
+	return JSON.stringify(curatedPlayer);
+}
+
+function loadGameFromText() {
+	var playerStr = $('#loadTextData').val();
+	try {
+		playerStr = atob(rot13(playerStr));
+		parseLoadData(playerStr);
+	}
+	catch (e) {
+		console.log('Failed to load data from text');
+		console.log(e);
+		$('#loadTextDataFailedAlert').removeClass('hidden');
+		return;
+	}
+
+	$('#saveLoadModal').modal('hide');
+}
+
+function loadGameFromStorage() {
+	var playerStr = localStorage.getItem('player');
+	parseLoadData(playerStr);
+}
+
+function parseLoadData(playerStr) {
+	if(playerStr == null) {
+		return;
+	}
+	
+	var playerObj = JSON.parse(playerStr);
+	
+	$.extend(true, player, playerObj);
+	
+	_.each(player.upgrades, function(value, upgradeId) {
+		player.upgrades[upgradeId] = upgrades[upgradeId];
+		delete upgrades[upgradeId];
+	});
+	
+	_.each(player.unlocks, function(value, unlockId) {
+	    applyUnlock(unlockId);
+	});
+	
+	_.each(player.currencies, function(currency) {
+		updateUI(currency);	
+		updateGainMultiplier(currency, currency.lastGainMultiplier);
+	});
+	updateUpgradesUI();
+}
+
+
+
+
+
+
+function clickProgressBar(currencyName) {
+	$('#' + currencyName + '')
 }
 
 function buyUpgrade(slot) {
@@ -574,81 +728,6 @@ function updateUpgradesUI() {
 	}
 }
 
-
-function saveGame() {
-	var curatedPlayer = {
-		currencies: {},
-		click: {
-		    power: player.click.power,
-		    throttle: player.click.throttle,
-		    throttlePerSecond: player.click.throttlePerSecond
-		},
-		workers: player.workers,
-		workersUsed: player.workersUsed,
-		workerCost: player.workerCost,
-		rating: player.rating,
-		
-		unlocks: player.unlocks,
-		upgrades: {},
-		
-		ticks: player.ticks,
-		totalTicks: player.totalTicks
-	};
-	
-	_.each(player.currencies, function(currency) {
-		curatedPlayer.currencies[currency.name] = {
-			level: currency.level,
-			exp: currency.exp,
-			exptnl: currency.exptnl,
-			
-			supply: currency.supply,
-			maxSupply: currency.maxSupply,
-			totalSupplyEarned: currency.totalSupplyEarned,
-			workers: currency.workers,
-			progress: currency.progress,
-
-			power: currency.power,
-			speed: currency.speed,
-			quantity: currency.quantity,
-			multiplier: currency.multiplier,
-
-			unitPrice: currency.unitPrice,
-			supplyCost: currency.supplyCost,
-			
-			name: currency.name
-		}
-	});
-
-    _.each(player.upgrades, function(upgrade) {
-        curatedPlayer.upgrades[upgrade.id] = true;
-    });
-
-	var playerStr = JSON.stringify(curatedPlayer);
-	
-	localStorage.setItem('player', playerStr);
-}
-
-function loadGame() {
-	var playerStr = localStorage.getItem('player');
-	var playerObj = JSON.parse(playerStr);
-	
-	$.extend(true, player, playerObj);
-	
-	_.each(player.upgrades, function(value, upgradeId) {
-		player.upgrades[upgradeId] = upgrades[upgradeId];
-		delete upgrades[upgradeId];
-	});
-	
-	_.each(player.unlocks, function(value, unlockId) {
-	    applyUnlock(unlockId);
-	});
-	
-	_.each(player.currencies, function(currency) {
-		updateUI(currency);	
-		updateGainMultiplier(currency, currency.lastGainMultiplier);
-	});
-	updateUpgradesUI();
-}
 
 
 
@@ -902,16 +981,23 @@ function gameLoop() {
 			}
 		});
 
-		if(player.ticks % 20 == 0) {
-			checkUnlocks();
-		}
-
+		// 200 milliseconds
 		if(player.ticks % 2 == 0) {
 			if(player.click.throttle > 0) {
 				player.click.throttle -= 1;
 			}
 		}
 		
+		// 2 seconds
+		if(player.ticks % 20 == 0) {
+			checkUnlocks();
+		}
+		
+		// 20 seconds
+		if(player.ticks % 200 == 0) {
+			saveGameToStorage();
+		}
+
 		gameLoopCounter = 0;
 		player.ticks++;
 		player.totalTicks++;
@@ -966,7 +1052,7 @@ function applyUnlock(id) {
         case "oceanquad":
 			player.unlocks.oceanquad = true;
 			$('#oceanDiv').removeClass('invisible');
-			$('#mysteryDiv').removeClass('invisible');
+			$('#coralDiv').removeClass('invisible');
             break;
         case "tools4":
 			player.unlocks.tools4 = true;
@@ -1047,6 +1133,28 @@ function checkUnlocks() {
 		    applyUnlock("bigmoney");
 		}
 	}
+}
+
+function toggleNightMode() {
+    var $elem = $('body');
+    
+    if($elem.hasClass('night-theme')) {
+	    $elem.removeClass('night-theme');
+    }
+    else {
+	    $elem.addClass('night-theme');
+    }
+}
+
+function toggleWorkMode() {
+    var $elem = $('body');
+    
+    if($elem.hasClass('work-theme')) {
+	    $('body').removeClass('work-theme');
+    }
+    else {
+	    $('body').addClass('work-theme');
+    }
 }
 
 String.prototype.commafy = function () {

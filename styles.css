@@ -69,6 +69,9 @@ h2 {
     color: white;
     background-color: #10630C;
 }
+.color-forest-light {
+    background-color: #E7EFE7;
+}
 
 .color-exp {
     background-color: #63ADDB;
@@ -76,6 +79,9 @@ h2 {
 
 .color-mountain {
     background-color: #EDC872;
+}
+.color-mountain-light {
+    background-color: #FBF4E3;
 }
 
 .color-stone {
@@ -97,7 +103,7 @@ h2 {
     background-color: #404040;
 }
 
-.color-mystery {
+.color-coral {
     color: white;
     background-color: purple;
 }
@@ -109,9 +115,15 @@ h2 {
 .color-ocean {
     background-color: #61B1D4;
 }
+.color-ocean-light {
+    background-color: #DFEFF6;
+}
 
 .color-prairie {
     background-color: #CED45B;
+}
+.color-prairie-light {
+    background-color: #F0F2CE;
 }
 
 .color-oil {
