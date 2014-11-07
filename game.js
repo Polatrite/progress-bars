@@ -857,6 +857,11 @@ function initialize() {
 	$('#selectSaveTextData').click(selectSaveTextData);
 	$('#resetGame').click(resetGameConfirm);
 
+	_.each(player.currencies, function(currency) {
+		$(currency.domBar).click(function() { clickProgressBar(currency.name); });
+		$('#' + currency.name + 'BarWrapper').click(function() { clickProgressBar(currency.name); });
+	});
+
 	_.each([1,2,3,4,5], function(count) {
 		$('#upgrade' + count + 'Button').click(function() { buyUpgrade(count); });
 	});
@@ -1042,10 +1047,6 @@ function recalculateUnitPrice(currency) {
 }
 
 
-function clickProgressBar(currencyName) {
-	$('#' + currencyName + '');
-}
-
 function buyUpgrade(slot) {
 	var $elem = $('#upgrade' + slot);
 	var upgrade = $elem.data('upgrade');
@@ -1119,9 +1120,14 @@ function clickAuto() {
 	autoClicker = setInterval(clickMoney, 250);
 }
 
-function progressCurrency(currency) {
+function progressCurrency(currency, manual) {
 	currency.computedSpeed = currency.workers * currency.speed * player.globalSpeedMultiplier;
-	currency.progress += currency.computedSpeed / 100;
+	if(manual) {
+		currency.progress += currency.speed * player.globalSpeedMultiplier / 100;
+	}
+	else {
+		currency.progress += currency.computedSpeed / 100;
+	}
 	
 	if(currency.computedSpeed >= 5000 && currency.progressBarFrozen == false) {
 		var $elem = $(currency.domBar);
@@ -1271,6 +1277,13 @@ function addMoney(val) {
 	return val;
 }
 
+function clickProgressBar(currencyName) {
+	if(player.click.throttle < player.click.throttlePerSecond) {
+		progressCurrency(player.currencies[currencyName], true);
+		player.click.throttle += 1;		
+	}
+}
+
 function clickMoney() {
 	if(player.click.throttle < player.click.throttlePerSecond) {
 		addMoney(player.click.power);
@@ -1354,7 +1367,7 @@ function gameLoop() {
 	gameLoopCounter++;
 	if(gameLoopCounter == 1) {
 		_.each(player.currencies, function(currency) {
-			progressCurrency(currency);
+			progressCurrency(currency, false);
 			gainCurrency(currency);
 			if(player.ticks % 1 == 0) {
 				updateUI(currency);
