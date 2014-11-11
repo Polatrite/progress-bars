@@ -636,7 +636,8 @@ var upgrades = {
 };
 
 var player = {
-	version: "1.1.0",
+	version: 3,
+	prestigeLevel: 0,
 	currencies: {
 		money: {
 		    name: 'money',
@@ -657,8 +658,8 @@ var player = {
 	workers: 0,
 	workersUsed: 0,
 	workerCost: 15,
-	workerCostFactor: 1.15,
-	workerCostDecrement: 0.99912,
+	workerCostFactor: 0.15,
+	workerCostDecrement: 0.991,
 	rating: 1.00,
 	unlocks: {},
 	upgrades: {},
@@ -685,6 +686,10 @@ function initialize() {
 	model = new Iugo({
 		player: player
 	});
+	
+	_.each(upgrades, function(upgrade) {
+		upgrade.bought = false;
+	});
 
 	_.each(currencies, function(currency) {
 		player.currencies[currency] = {
@@ -706,12 +711,14 @@ function initialize() {
 			baseUnitPrice: 2.00,
 			unitPrice: 2.00,
 			lastSale: "0.00",
-			lastGainMultiplier: 1,
+			lastGainMultiplier: 0,
 			supplyCost: 0,
 
 			name: currency,
 			computedSpeed: 0,
 			progressBarFrozen: false,
+			isBiome: false,
+			isResource: false,
 			isSales: false,
 			isTools: false,
 			domBar: "#" + currency + "Bar",
@@ -765,16 +772,19 @@ function initialize() {
 				curr.unitPrice = 2;
 				curr.bonusCurrencies = ['tools1', 'forest'];
 				curr.sales = 'sales1';
+				curr.isResource = true;
 				break;
 			case 'forest':
 				curr.speed = 200;
 				curr.maxSupply = 25;
+				curr.isBiome = true;
 				break;
 			case 'rubber':
 				curr.speed = 150;
 				curr.unitPrice = 2.5;
 				curr.bonusCurrencies = ['tools2', 'forest'];
 				curr.sales = 'sales1';
+				curr.isResource = true;
 				break;
 
 			case 'stone':
@@ -782,16 +792,19 @@ function initialize() {
 				curr.unitPrice = 3.5;
 				curr.bonusCurrencies = ['tools1', 'mountain'];
 				curr.sales = 'sales1';
+				curr.isResource = true;
 				break;
 			case 'mountain':
 				curr.speed = 100;
 				curr.maxSupply = 25;
+				curr.isBiome = true;
 				break;
 			case 'ore':
 				curr.speed = 50;
 				curr.unitPrice = 12;
 				curr.bonusCurrencies = ['tools4', 'mountain'];
 				curr.sales = 'sales1';
+				curr.isResource = true;
 				break;
 
 			case 'food':
@@ -799,16 +812,19 @@ function initialize() {
 				curr.unitPrice = 3;
 				curr.bonusCurrencies = ['tools2', 'prairie'];
 				curr.sales = 'sales2';
+				curr.isResource = true;
 				break;
 			case 'prairie':
 				curr.speed = 100;
 				curr.maxSupply = 25;
+				curr.isBiome = true;
 				break;
 			case 'livestock':
 				curr.speed = 25;
 				curr.unitPrice = 12;
 				curr.bonusCurrencies = ['tools3', 'prairie'];
 				curr.sales = 'sales2';
+				curr.isResource = true;
 				break;
 
 			case 'coral':
@@ -816,16 +832,19 @@ function initialize() {
 				curr.unitPrice = 8;
 				curr.bonusCurrencies = ['tools4', 'ocean'];
 				curr.sales = 'sales2';
+				curr.isResource = true;
 				break;
 			case 'ocean':
 				curr.speed = 25;
 				curr.maxSupply = 25;
+				curr.isBiome = true;
 				break;
 			case 'oil':
 				curr.speed = 5;
 				curr.unitPrice = 50;
 				curr.bonusCurrencies = ['tools3', 'ocean'];
 				curr.sales = 'sales2';
+				curr.isResource = true;
 				break;
 
 		}
@@ -873,7 +892,7 @@ function initialize() {
 	window.onbeforeunload = function(evt) {
 		if(!game.isResettingGame) {
 			saveGameToStorage();
-			console.log('Game saved successfully?');
+			console.debug('Game saved successfully.');
 		}
 	};
 	
@@ -905,10 +924,14 @@ function rot13(s)
 function resetGameConfirm() {
 	var confirm = window.confirm("Are you sure you want to reset your game? This will delete all your data!");
 	if(confirm == true) {
-		localStorage.removeItem('player');
-		game.isResettingGame = true;
-		location.reload(true);
+		resetGame();
 	}
+}
+
+function resetGame() {
+	localStorage.removeItem('player');
+	game.isResettingGame = true;
+	location.reload(true);
 }
 
 function selectSaveTextData() {
@@ -941,6 +964,7 @@ function saveGameToStorage() {
 function getSaveGameData() {
 	var curatedPlayer = {
 		version: player.version,
+		prestigeLevel: player.prestigeLevel,
 		currencies: {},
 		click: {
 		    power: player.click.power,
@@ -981,6 +1005,9 @@ function getSaveGameData() {
 			baseUnitPrice: currency.baseUnitPrice,
 			unitPrice: currency.unitPrice,
 			supplyCost: currency.supplyCost,
+
+			bonusCurrencies: currency.bonusCurrencies,
+			rampCurrencies: currency.rampCurrencies,
 			
 			name: currency.name
 		}
@@ -993,15 +1020,26 @@ function getSaveGameData() {
 	return JSON.stringify(curatedPlayer);
 }
 
+function backupSaveGame() {
+	var playerStr = localStorage.getItem('player');
+	localStorage.setItem('backup-player', playerStr);
+	console.debug(playerStr);
+	console.log("Previous save data backed up, just in case.");
+}
+
 function loadGameFromText() {
+	backupSaveGame();
 	var playerStr = $('#loadTextData').val();
 	try {
 		playerStr = atob(rot13(playerStr));
 		parseLoadData(playerStr);
+		localStorage.setItem('player', playerStr);
+		game.isResettingGame = true;
+		location.reload(true);
 	}
 	catch (e) {
-		console.log('Failed to load data from text');
-		console.log(e);
+		console.error('Failed to load data from text');
+		console.error(e);
 		$('#loadTextDataFailedAlert').removeClass('hidden');
 		return;
 	}
@@ -1011,7 +1049,26 @@ function loadGameFromText() {
 
 function loadGameFromStorage() {
 	var playerStr = localStorage.getItem('player');
-	parseLoadData(playerStr);
+	var prestigeStr = localStorage.getItem('prestige');
+	
+	if(prestigeStr) {
+		if(playerStr === null) {
+			var prestige = JSON.parse(prestigeStr);
+			
+			player.prestigeLevel = prestige.prestigeLevel;
+			player.rating = prestige.rating;
+			player.currencies.money.supply = prestige.money;
+			player.workers = prestige.workers;
+			
+			localStorage.removeItem('prestige');
+			return;
+		}
+		else {
+			console.log("Catastrophic prestige failure, your player record was not properly reset. Continuing as if you didn't prestige.");
+		}
+	}
+	var playerObj = parseLoadData(playerStr);
+	initializeLoadData(playerObj);
 }
 
 function parseLoadData(playerStr) {
@@ -1021,11 +1078,25 @@ function parseLoadData(playerStr) {
 	
 	var playerObj = JSON.parse(playerStr);
 	
+	return playerObj;
+}
+
+function initializeLoadData(playerObj) {
+	if(!playerObj) {
+		return;
+	}
+	
+	repairSave(playerObj);
+	
 	$.extend(true, player, playerObj);
+	
+	_.each(upgrades, function(upgrade) {
+		upgrade.bought = false;
+	});
 	
 	_.each(player.upgrades, function(value, upgradeId) {
 		player.upgrades[upgradeId] = upgrades[upgradeId];
-		delete upgrades[upgradeId];
+		upgrades[upgradeId].bought = true;
 	});
 	
 	_.each(player.unlocks, function(value, unlockId) {
@@ -1036,10 +1107,85 @@ function parseLoadData(playerStr) {
 		updateUI(currency);	
 		updateGainMultiplier(currency, currency.lastGainMultiplier);
 	});
+	
 	updateUpgradesUI();
 }
 
 
+function prestige() {
+	if(!checkPrestige()) {
+		return;
+	}
+	
+	var prestige = {
+		prestigeLevel: player.prestigeLevel + 1,
+		rating: player.rating,
+		money: getRoundedCurrencyNum(Math.sqrt(player.workerCost/10)),
+		workers: player.prestigeLevel*2
+	}
+	
+	var prestigeStr = JSON.stringify(prestige);
+	
+	localStorage.setItem('prestige', prestigeStr);
+	resetGame();
+}
+
+function checkPrestige() {
+	var valid = true;
+	
+	_.each(player.currencies, function(currency) {
+		if(currency.isResource && currency.lastGainMultiplier < 16) {
+			valid = false;
+		}
+	});
+	
+	return valid;
+}
+
+function repairSave(player) {
+	if(isNaN(player.version) || player.version < 3) {
+		backupSaveGame();
+		console.log('Upgrading save data from version ' + player.version + ' to 3 (v1.1.1)');
+		player.version = 3;
+		
+		var removedUpgrades = ['dedicatedResources', 'crossToolSynergy', 'growthEconomy'];
+		
+		for(var i in removedUpgrades) {
+			if(i in player.upgrades) {
+				delete player.upgrades[i];
+				console.debug('Deleted old upgrade: ' + i);
+			}
+		}
+
+		_.each(player.upgrades, function(value, upgradeId) {
+			if(value == undefined) {
+				delete player.upgrades[upgradeId];
+				console.debug('Delete invalid upgrade: ' + upgradeId);
+			}
+			
+			if((upgradeId == "cutToolSynergy" && player.currencies.tools1.rampCurrencies === undefined)
+				|| (upgradeId == "motoToolSynergy" && player.currencies.tools2.rampCurrencies === undefined)
+				|| (upgradeId == "aquaToolSynergy" && player.currencies.tools3.rampCurrencies === undefined)
+				|| (upgradeId == "heatToolSynergy" && player.currencies.tools4.rampCurrencies === undefined)) {
+				upgrades[upgradeId].apply();
+			}
+		});
+		
+		var oldWorkers = player.workers;
+		var oldWorkersUsed = player.workersUsed;
+		
+		player.workers = 0;
+		player.workerCost = 15;
+		player.workerCostFactor = 0.15;
+		player.workerCostDecrement = 0.991;
+		
+		while(player.workers <= oldWorkers) {
+			player.workers++;
+			player.workerCost = getNewCost(player.workerCost);
+		}
+		
+	}
+}
 
 
 function recalculateUnitPrice(currency) {
@@ -1050,13 +1196,12 @@ function recalculateUnitPrice(currency) {
 function buyUpgrade(slot) {
 	var $elem = $('#upgrade' + slot);
 	var upgrade = $elem.data('upgrade');
-	console.log(upgrade);
-	
+
 	if(player.currencies.money.supply >= upgrade.cost) {
 		addMoney(upgrade.cost * -1);
 
 		player.upgrades[upgrade.id] = upgrade;
-		delete upgrades[upgrade.id];
+		upgrades[upgrade.id].bought = true;
 		
 		upgrade.apply();
 		
@@ -1069,8 +1214,8 @@ function updateUpgradesUI() {
 	var count = 1;
 	_.each(upgrades, function(upgrade) {
 		if(count > 5) { return; }
-		console.log(upgrade);
-
+		if(upgrade.bought == true) { return; }
+		
 		var $elem;
 		$elem = $('#upgrade' + count);
 		$elem.attr('data-original-title', upgrade.tooltip);
@@ -1106,10 +1251,6 @@ function updateUpgradesUI() {
 		count++;
 	}
 }
-
-
-
-
 
 
 var autoClicker = null;
@@ -1216,7 +1357,6 @@ function doStandardGain(currency) {
 	calculatedSupply *= player.globalSupplyMultiplier;
 	calculatedSupply = Math.round(Math.min(calculatedSupply, currency.maxSupply - currency.supply));
 	
-	console.log(currency.name + " gained " + calculatedSupply + " units");
 	currency.supply += calculatedSupply;
 	currency.totalSupplyEarned += calculatedSupply;
 }
@@ -1235,7 +1375,6 @@ function doSalesGain(currency) {
 		
 		soldCost = earnMoney(soldCost);
 		currency.lastSale = getRoundedCurrency(soldCost);
-		console.log(currency.name + " SOLD " + soldSupply + " units for $" + soldCost);
 	}
 
 	var transportedTotalSupply = 0;
@@ -1250,14 +1389,11 @@ function doSalesGain(currency) {
 			sellCurr.supply -= transportedSupply;
 			transportedTotalSupply += transportedSupply;
 			transportedTotalCost += transportedCost;
-			
-			console.log(currency.name + " shipped " + transportedSupply + " units of " + sellCurr.name + " for $" + transportedCost);
 		}
 	});
 	
 	transportedTotalSupply = Math.round(transportedTotalSupply);
 	if(transportedTotalSupply >= 1) {
-		console.log(currency.name + " shipped " + transportedTotalSupply + " total units for $" + transportedTotalCost);
 		currency.supply += transportedTotalSupply;
 		currency.supplyCost += transportedTotalCost;
 	}
@@ -1279,8 +1415,12 @@ function addMoney(val) {
 
 function clickProgressBar(currencyName) {
 	if(player.click.throttle < player.click.throttlePerSecond) {
-		progressCurrency(player.currencies[currencyName], true);
-		player.click.throttle += 1;		
+		
+		for(var i = 1; i <= player.click.power * 3; i++) {
+			progressCurrency(player.currencies[currencyName], true);
+		}
+		
+		player.click.throttle += 1;
 	}
 }
 
@@ -1315,9 +1455,31 @@ function removeWorker(currency) {
 	}
 }
 
+function newCostTest() {
+	var wc = 15; var wcf = 0.15; var wcd = 0.991; var totalCost = wc;
+	for(var works = 1; works <= 110; works++) {
+	    console.warn(works + " costs " + wc + " (" + totalCost +")");
+	    wcf *= wcd;
+	    wc = wc * (1.000 + wcf);
+	    totalCost += wc;
+	}
+	console.warn("wcf " + wcf);
+}
+
+function oldCostTest() {
+	var wc = 15; var wcf = 1.15; var wcd = 0.99912; var totalCost = wc;
+	for(var works = 1; works <= 110; works++) {
+	    console.warn(works + " costs " + wc + " (" + totalCost +")");
+	    wcf *= wcd;
+	    wc = wc * wcf;
+	    totalCost += wc;
+	}
+	console.warn("wcf " + wcf);
+}
+
 function getNewCost(cost) {
 	player.workerCostFactor *= player.workerCostDecrement
-	cost = cost * player.workerCostFactor;
+	cost = cost * (1.000 + player.workerCostFactor);
 	return Math.round(cost);
 }
 
@@ -1471,7 +1633,7 @@ function checkUnlocks() {
 		}
 	}
 	if(!("sales1" in player.unlocks)) {
-		if(player.currencies.wood.supply >= 30) {
+		if(player.prestigeLevel > 0 || player.currencies.wood.supply >= 30) {
 		    applyUnlock("sales1");
 		}
 	}
@@ -1486,7 +1648,7 @@ function checkUnlocks() {
 		}
 	}
 	if(!("upgrades" in player.unlocks)) {
-		if(player.rating >= 1.25) {
+		if(player.prestigeLevel > 0 || player.rating >= 1.25) {
 		    applyUnlock("upgrades");
 		}
 	}
@@ -1496,7 +1658,7 @@ function checkUnlocks() {
 		}
 	}
 	if(!("harvestmoon" in player.unlocks)) {
-		if(player.rating >= 1.40) {
+		if(player.workers >= 20 && player.rating >= 1.40) {
 		    applyUnlock("harvestmoon");
 		}
 	}
@@ -1516,17 +1678,17 @@ function checkUnlocks() {
 		}
 	}
 	if(!("oceanquad" in player.unlocks)) {
-		if(player.rating >= 3.00) {
+		if(player.workers >= 40 && player.rating >= 3.00) {
 		    applyUnlock("oceanquad");
 		}
 	}
 	if(!("tools4" in player.unlocks)) {
-		if(player.rating >= 4.00) {
+		if(player.workers >= 70 && player.rating >= 4.00) {
 		    applyUnlock("tools4");
 		}
 	}
 	if(!("bigmoney" in player.unlocks)) {
-		if(player.rating >= 5.00) {
+		if(player.workers >= 70 && player.rating >= 5.00) {
 		    applyUnlock("bigmoney");
 		}
 	}
