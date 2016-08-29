@@ -11,7 +11,6 @@ A HTML5 incremental game with an interesting take on progress bars and resource 
 1. Clone the repository
 1. Open index.html in your web browser
 1. That's all!
-1. Optionally, bower install to update bower_components
 
 ## How to Collaborate
 
