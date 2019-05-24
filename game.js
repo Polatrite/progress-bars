@@ -18,7 +18,7 @@ var upgrades = {
 		name: 'Logging Truck',
 		cost: 400,
 		tooltip: 'Increases the supply limit of Wood by 50.',
-		icon: 'glyphicon-fire',
+		icon: 'glyphicon-align-justify',
 		apply: function() {
 			player.currencies.wood.maxSupply += 50;
 		}
@@ -31,6 +31,17 @@ var upgrades = {
 		icon: 'glyphicon-home',
 		apply: function() {
 			player.currencies.sales1.maxSupply += 50;
+		}
+	},
+	plankDistribution: {
+		id: 'plankDistribution',
+		name: 'Plank Distribution',
+		cost: 650,
+		tooltip: 'Increase the base unit price of Wood by $0.10.',
+		icon: 'glyphicon-th-large',
+		apply: function() {
+			player.currencies.wood.baseUnitPrice += 0.10;
+			recalculateUnitPrice(player.currencies.wood);
 		}
 	},
 	consultants: {
@@ -68,7 +79,7 @@ var upgrades = {
 		name: 'Grain Tractor',
 		cost: 2100,
 		tooltip: 'Increases the supply limit of Food by 50.',
-		icon: 'glyphicon-fire',
+		icon: 'glyphicon-filter',
 		apply: function() {
 			player.currencies.food.maxSupply += 50;
 		}
@@ -77,8 +88,8 @@ var upgrades = {
 		id: 'massReforestation',
 		name: 'Mass Reforestation',
 		cost: 3000,
-		tooltip: 'Increases the supply limit of Forest by 25.',
-		icon: 'glyphicon-thumbs-up',
+		tooltip: 'Increases the supply limit of Forest by 25, and unlock another synergy bonus at 40+ supply.',
+		icon: 'glyphicon-tree-conifer',
 		apply: function() {
 			player.currencies.forest.maxSupply += 25;
 		}
@@ -127,14 +138,14 @@ var upgrades = {
 			player.click.power *= 2;
 		}
 	},
-	cattleProds: {
-		id: 'cattleProds',
-		name: 'Cattle Prods',
+	silos: {
+		id: 'silos',
+		name: 'Silos',
 		cost: 17100,
-		tooltip: 'Increases the supply limit of Livestock by 50.',
-		icon: 'glyphicon-fire',
+		tooltip: 'Increases the supply limit of Food by 50.',
+		icon: 'glyphicon-tint',
 		apply: function() {
-			player.currencies.livestock.maxSupply += 50;
+			player.currencies.food.maxSupply += 50;
 		}
 	},
 	advisoryBoard2: {
@@ -163,8 +174,8 @@ var upgrades = {
 		id: 'irrigationSprinklers',
 		name: 'Irrigation Sprinklers',
 		cost: 23800,
-		tooltip: 'Increases the supply limit of Prairie by 25.',
-		icon: 'glyphicon-fire',
+		tooltip: 'Increases the supply limit of Prairie by 25, and unlock another synergy bonus at 40+ supply.',
+		icon: 'glyphicon-tint',
 		apply: function() {
 			player.currencies.prairie.maxSupply += 25;
 		}
@@ -179,6 +190,17 @@ var upgrades = {
 			player.workers += 3;
 		}
 	},
+	tireFactory: {
+		id: 'tireFactory',
+		name: 'Tire Factory',
+		cost: 43000,
+		tooltip: 'Increase the base unit price of Rubber by $0.80.',
+		icon: 'glyphicon-cog',
+		apply: function() {
+			player.currencies.rubber.baseUnitPrice += 0.80;
+			recalculateUnitPrice(player.currencies.rubber);
+		}
+	},
 	functionalMastery1: {
 		id: 'functionalMastery1',
 		name: 'Functional Mastery #1',
@@ -189,15 +211,80 @@ var upgrades = {
 			player.currencies.sales2.sellRate = 60;
 		}
 	},
-	dedicatedResources: {
+	foodProcessing: {
+		id: 'foodProcessing',
+		name: 'Food Processing',
+		cost: 58000,
+		tooltip: 'Increase the base unit price of Food by $0.25.',
+		icon: 'glyphicon-cog',
+		apply: function() {
+			player.currencies.food.baseUnitPrice += 0.25;
+			recalculateUnitPrice(player.currencies.food);
+		}
+	},
+	regionalSales: {
+		id: 'regionalSales',
+		name: 'Regional Sales',
+		cost: 75000,
+		tooltip: 'Increases your Sales Multiplier by 0.50x.',
+		icon: 'glyphicon-tag',
+		apply: function() {
+			player.rating = addRoundedCurrencyNum(player.rating, 0.50);
+		}
+	},
+	marbleShaping: {
+		id: 'marbleShaping',
+		name: 'Marble Shaping',
+		cost: 87000,
+		tooltip: 'Increase the base unit price of Stone by $2.00.',
+		icon: 'glyphicon-fire',
+		apply: function() {
+			player.currencies.stone.baseUnitPrice += 2.00;
+			recalculateUnitPrice(player.currencies.stone);
+		}
+	},
+	chipboardMill: {
+		id: 'chipboardMill',
+		name: 'Chipboard Mill',
+		cost: 105000,
+		tooltip: 'Increase the base unit price of Wood by $0.50.',
+		icon: 'glyphicon-cog',
+		apply: function() {
+			player.currencies.wood.baseUnitPrice += 0.50;
+			recalculateUnitPrice(player.currencies.wood);
+		}
+	},
+	cattleProds: {
+		id: 'cattleProds',
+		name: 'Cattle Prods',
+		cost: 122000,
+		tooltip: 'Increases the supply limit of Livestock by 50.',
+		icon: 'glyphicon-fire',
+		apply: function() {
+			player.currencies.livestock.maxSupply += 50;
+		}
+	},
+	/*dedicatedResources: {
 		id: 'dedicatedResources',
 		name: 'Dedicated Resources',
 		cost: 150000,
-		tooltip: '(NO WORKIE) All resource nodes fill up at half the rate, but generate triple the resources.',
-		icon: 'glyphicon-barcode',
+		tooltip: 'Increases your global supply multiplier by 200%, but decreases your global speed multiplier by 50%.',
+		icon: 'glyphicon-upload',
 		apply: function() {
-			player.globalSpeedMultiplier = 0.5;
-			player.globalSupplyMultiplier = 3.0;
+			player.globalSpeedMultiplier -= 0.5;
+			player.globalSupplyMultiplier += 2.0;
+		}
+	},*/
+	advisoryBoard3: {
+		id: 'advisoryBoard3',
+		name: 'Advisory Board #3',
+		cost: 163000,
+		tooltip: 'Instantly gain 250 experience on all Forest quadrant nodes.',
+		icon: 'glyphicon-thumbs-up',
+		apply: function() {
+			gainExp(player.currencies.forest, 250);
+			gainExp(player.currencies.wood, 250);
+			gainExp(player.currencies.rubber, 250);
 		}
 	},
 	warehouseConveyers: {
@@ -210,6 +297,17 @@ var upgrades = {
 			player.currencies.sales2.transportRate = 60;
 		}
 	},
+	butcherShop: {
+		id: 'butcherShop',
+		name: 'Butcher Shop',
+		cost: 191000,
+		tooltip: 'Increase the base unit price of Livestock by $5.00.',
+		icon: 'glyphicon-home',
+		apply: function() {
+			player.currencies.livestock.baseUnitPrice += 5.00;
+			recalculateUnitPrice(player.currencies.livestock);
+		}
+	},
 	commodityMastery2: {
 		id: 'commodityMastery2',
 		name: 'Commodity Mastery #2',
@@ -218,6 +316,48 @@ var upgrades = {
 		icon: 'glyphicon-barcode',
 		apply: function() {
 			player.currencies.sales1.sellRate = 70;
+		}
+	},
+	passiveIncomeStream: {
+		id: 'passiveIncomeStream',
+		name: 'Passive Income Stream',
+		cost: 50000,
+		tooltip: 'You passively generate $250.00 every 5 seconds.',
+		icon: 'glyphicon-adjust',
+		apply: function() {
+			player.passiveMoney += 250.00;
+		}
+	},
+	pneumaticTools: {
+		id: 'pneumaticTools',
+		name: 'Pneumatic Tools',
+		cost: 375000,
+		tooltip: 'Increases the speed of your Aqua Tools by 33%.',
+		icon: 'glyphicon-transfer',
+		apply: function() {
+			player.currencies.tools3.speed = 100;
+		}
+	},
+	advisoryBoard4: {
+		id: 'advisoryBoard4',
+		name: 'Advisory Board #4',
+		cost: 150000,
+		tooltip: 'Instantly gain 250 experience on all Ocean quadrant nodes.',
+		icon: 'glyphicon-thumbs-up',
+		apply: function() {
+			gainExp(player.currencies.ocean, 250);
+			gainExp(player.currencies.oil, 250);
+			gainExp(player.currencies.coral, 250);
+		}
+	},
+	coralGarden: {
+		id: 'coralGarden',
+		name: 'Coral Garden',
+		cost: 90000,
+		tooltip: 'Increases the supply limit of Coral by 50.',
+		icon: 'glyphicon-fire',
+		apply: function() {
+			player.currencies.coral.maxSupply += 50;
 		}
 	},
 	supplyRouteOptimization: {
@@ -230,19 +370,89 @@ var upgrades = {
 			player.currencies.sales1.transportRate = 70;
 		}
 	},
-	crossToolSynergy: {
-		id: 'crossToolSynergy',
-		name: 'Cross-Tool Synergy',
+	seedSpreaders: {
+		id: 'seedSpreaders',
+		name: 'Seed Spreaders',
+		cost: 650000,
+		tooltip: 'Increase the base unit price of Food by $1.25.',
+		icon: 'glyphicon-unchecked',
+		apply: function() {
+			player.currencies.food.baseUnitPrice += 1.25;
+			recalculateUnitPrice(player.currencies.food);
+		}
+	},
+	cutToolSynergy: {
+		id: 'cutToolSynergy',
+		name: 'Cut Tool Synergy',
 		cost: 1000000,
-		tooltip: 'As long as you maintain 20%+ supply of each tool, tool generation is increased by 1.',
+		tooltip: 'For every other tool at 80%+ supply, your workers create +1 Cut Tool.',
 		icon: 'glyphicon-refresh',
 		apply: function() {
 			player.currencies.tools1.rampCurrencies = ['tools2', 'tools3', 'tools4'];
-			player.currencies.tools2.rampCurrencies = ['tools1', 'tools3', 'tools4'];
+		}
+	},
+	rareJewelrySupply: {
+		id: 'rareJewelrySupply',
+		name: 'Rare Jewelry Supply',
+		cost: 1200000,
+		tooltip: 'Increase the base unit price of Coral by $5.50.',
+		icon: 'glyphicon-fire',
+		apply: function() {
+			player.currencies.coral.baseUnitPrice += 5.50;
+			recalculateUnitPrice(player.currencies.coral);
+		}
+	},
+	durableFlooring: {
+		id: 'durableFlooring',
+		name: 'Durable Flooring',
+		cost: 1400000,
+		tooltip: 'Increase the base unit price of Rubber by $2.10.',
+		icon: 'glyphicon-unchecked',
+		apply: function() {
+			player.currencies.rubber.baseUnitPrice += 2.10;
+			recalculateUnitPrice(player.currencies.rubber);
+		}
+	},
+	atvs: {
+		id: 'atvs',
+		name: 'ATVs',
+		cost: 1500000,
+		tooltip: 'Increases the speed of Forest by 50%.',
+		icon: 'glyphicon-remove-sign',
+		apply: function() {
+			player.currencies.forest.speed = Math.round(player.currencies.forest.speed * 1.5);
+		}
+	},
+	continentalSales: {
+		id: 'continentalSales',
+		name: 'Continental Sales',
+		cost: 1800000,
+		tooltip: 'Increases your Sales Multiplier by 1.00x.',
+		icon: 'glyphicon-tags',
+		apply: function() {
+			player.rating = addRoundedCurrencyNum(player.rating, 1.00);
+		}
+	},
+	aquaToolSynergy: {
+		id: 'aquaToolSynergy',
+		name: 'Aqua Tool Synergy',
+		cost: 2000000,
+		tooltip: 'For every other tool at 80%+ supply, your workers create +1 Aqua Tool.',
+		icon: 'glyphicon-refresh',
+		apply: function() {
 			player.currencies.tools3.rampCurrencies = ['tools1', 'tools2', 'tools4'];
-			player.currencies.tools4.rampCurrencies = ['tools1', 'tools2', 'tools3'];
-			
-			// TODO: Potentially add text to the tooltip for each tool to explain this interaction
+		}
+	},
+	advisoryBoard5: {
+		id: 'advisoryBoard5',
+		name: 'Advisory Board #5',
+		cost: 270000,
+		tooltip: 'Instantly gain 400 experience on all Mountain quadrant nodes.',
+		icon: 'glyphicon-thumbs-up',
+		apply: function() {
+			gainExp(player.currencies.mountain, 400);
+			gainExp(player.currencies.ore, 400);
+			gainExp(player.currencies.stone, 400);
 		}
 	},
 	functionalMastery2: {
@@ -255,28 +465,179 @@ var upgrades = {
 			player.currencies.sales2.sellRate = 70;
 		}
 	},
-	growthEconomy: {
-		id: 'growthEconomy',
-		name: 'Growth Economy',
-		cost: 15000,
-		tooltip: '(NO WORKIE) When economic fluctuations occur, your resources will more often sell for more.',
-		icon: 'glyphicon-tasks',
+	internationalShipping: {
+		id: 'internationalShipping',
+		name: 'International Shipping',
+		cost: 2800000,
+		tooltip: 'Commodity Sales now transports 75% of their supply per cycle.',
+		icon: 'glyphicon-barcode',
 		apply: function() {
+			player.currencies.sales1.transportRate = 75;
 		}
 	},
-	clickQueue: {
-		id: 'clickQueue',
-		name: 'Click Queue',
-		cost: 1256000,
-		// TODO: Think this through.
-		tooltip: '(NO WORKIE) You can now queue up to 50 clicks.',
-		icon: 'glyphicon-thumbs-up',
+	precisionSmelting: {
+		id: 'precisionSmelting',
+		name: 'Precision Smelting',
+		cost: 2900000,
+		tooltip: 'Increase the base unit price of Ore by $3.80.',
+		icon: 'glyphicon-unchecked',
 		apply: function() {
+			player.currencies.ore.baseUnitPrice += 3.80;
+			recalculateUnitPrice(player.currencies.ore);
+		}
+	},
+	motoToolSynergy: {
+		id: 'motoToolSynergy',
+		name: 'Moto Tool Synergy',
+		cost: 3000000,
+		tooltip: 'For every other tool at 80%+ supply, your workers create +1 Moto Tool.',
+		icon: 'glyphicon-refresh',
+		apply: function() {
+			player.currencies.tools2.rampCurrencies = ['tools1', 'tools3', 'tools4'];
+		}
+	},
+	investmentMarket: {
+		id: 'investmentMarket',
+		name: 'Investment Market',
+		cost: 350000,
+		tooltip: 'You passively earn $350.00 every 5 seconds.',
+		icon: 'glyphicon-list-alt',
+		apply: function() {
+			player.passiveMoney += 350;
+		}
+	},
+	largeBinCarts: {
+		id: 'largeBinCarts',
+		name: 'Large Bin Carts',
+		cost: 3250000,
+		tooltip: 'Increases the supply limit of Mountain by 25, and unlock another synergy bonus at 40+ supply.',
+		icon: 'glyphicon-compressed',
+		apply: function() {
+			player.currencies.mountain.maxSupply += 25;
+		}
+	},
+	outsourcing: {
+		id: 'outsourcing',
+		name: 'Outsourcing',
+		cost: 3500000,
+		tooltip: 'Increases your global speed multiplier by 100%, but lowers the unit price of all resources by 30%.',
+		icon: 'glyphicon-globe',
+		apply: function() {
+			player.globalSpeedMultiplier += 1.0;
+			_.each(player.currencies, function(currency) {
+				currency.baseUnitPrice *= 0.7;
+				recalculateUnitPrice(currency);
+			});
+		}
+	},
+	globalFreight: {
+		id: 'globalFreight',
+		name: 'Global Freight',
+		cost: 3750000,
+		tooltip: 'Functional Sales now transports 75% of their supply per cycle.',
+		icon: 'glyphicon-retweet',
+		apply: function() {
+			player.currencies.sales2.transportRate = 75;
+		}
+	},
+	heatToolSynergy: {
+		id: 'heatToolSynergy',
+		name: 'Heat Tool Synergy',
+		cost: 4000000,
+		tooltip: 'For every other tool at 80%+ supply, your workers create +1 Heat Tool.',
+		icon: 'glyphicon-refresh',
+		apply: function() {
+			player.currencies.tools4.rampCurrencies = ['tools1', 'tools2', 'tools3'];
+		}
+	},
+	largeCapacityBarges: {
+		id: 'largeCapacityBarges',
+		name: 'Large Capacity Barges',
+		cost: 4250000,
+		tooltip: 'Increases the speed of Ocean by 100%.',
+		icon: 'glyphicon-remove-sign',
+		apply: function() {
+			player.currencies.ocean.speed *= 2;
+		}
+	},
+	commodityMastery3: {
+		id: 'commodityMastery3',
+		name: 'Commodity Mastery #3',
+		cost: 4500000,
+		tooltip: 'Commodity Sales now sells 75% of their supply per cycle.',
+		icon: 'glyphicon-barcode',
+		apply: function() {
+			player.currencies.sales1.sellRate = 75;
+		}
+	},
+	unmannedVehicles: {
+		id: 'unmannedVehicles',
+		name: 'Unmanned Vehicles',
+		cost: 4750000,
+		tooltip: 'Increases the speed of Prairie by 50%.',
+		icon: 'glyphicon-remove-sign',
+		apply: function() {
+			player.currencies.prairie.speed = Math.round(player.currencies.prairie.speed * 1.5);
+		}
+	},
+	globalSales: {
+		id: 'globalSales',
+		name: 'Global Sales',
+		cost: 5000000,
+		tooltip: 'Increases your Sales Multiplier by 1.00x.',
+		icon: 'glyphicon-globe',
+		apply: function() {
+			player.rating = addRoundedCurrencyNum(player.rating, 1.00);
+		}
+	},
+	deepSeaExploration: {
+		id: 'deepSeaExploration',
+		name: 'Deep Sea Exploration',
+		cost: 6250000,
+		tooltip: 'Increases the supply limit of Ocean by 25, and unlock another synergy bonus at 40+ supply.',
+		icon: 'glyphicon-compressed',
+		apply: function() {
+			player.currencies.ocean.maxSupply += 25;
+		}
+	},
+	functionalMastery3: {
+		id: 'functionalMastery3',
+		name: 'Functional Mastery #3',
+		cost: 7500000,
+		tooltip: 'Functional Sales now sells 75% of their supply per cycle.',
+		icon: 'glyphicon-barcode',
+		apply: function() {
+			player.currencies.sales2.sellRate = 75;
+		}
+	},
+	channelBlasting: {
+		id: 'channelBlasting',
+		name: 'Channel Blasting',
+		cost: 9000000,
+		tooltip: 'Increases the speed of Mountain by 50%.',
+		icon: 'glyphicon-remove-sign',
+		apply: function() {
+			player.currencies.mountain.speed = Math.round(player.currencies.mountain.speed * 1.5);
+		}
+	},
+	widespreadDemand: {
+		id: 'widespreadDemand',
+		name: 'Widespread Demand',
+		cost: 10000000,
+		tooltip: 'Increases the base unit price of all resources by 50%.',
+		icon: 'glyphicon-fire',
+		apply: function() {
+			_.each(player.currencies, function(currency) {
+				currency.baseUnitPrice *= 1.5;
+				recalculateUnitPrice(currency);
+			});
 		}
 	},
 };
 
 var player = {
+	version: 3,
+	prestigeLevel: 0,
 	currencies: {
 		money: {
 		    name: 'money',
@@ -293,9 +654,12 @@ var player = {
 		throttle: 0,
 		throttlePerSecond: 5
 	},
+	passiveMoney: 0.00,
 	workers: 0,
 	workersUsed: 0,
-	workerCost: 10,
+	workerCost: 15,
+	workerCostFactor: 0.15,
+	workerCostDecrement: 0.991,
 	rating: 1.00,
 	unlocks: {},
 	upgrades: {},
@@ -322,6 +686,10 @@ function initialize() {
 	model = new Iugo({
 		player: player
 	});
+	
+	_.each(upgrades, function(upgrade) {
+		upgrade.bought = false;
+	});
 
 	_.each(currencies, function(currency) {
 		player.currencies[currency] = {
@@ -340,13 +708,17 @@ function initialize() {
 			quantity: 1,
 			multiplier: 1.0,
 
+			baseUnitPrice: 2.00,
 			unitPrice: 2.00,
 			lastSale: "0.00",
-			lastGainMultiplier: 1,
+			lastGainMultiplier: 0,
 			supplyCost: 0,
 
 			name: currency,
 			computedSpeed: 0,
+			progressBarFrozen: false,
+			isBiome: false,
+			isResource: false,
 			isSales: false,
 			isTools: false,
 			domBar: "#" + currency + "Bar",
@@ -356,22 +728,26 @@ function initialize() {
 			domValue: "#" + currency + "Value"
 		};
 		
-		var curr = player.currencies[currency]
+		var curr = player.currencies[currency];
 		
 		switch(currency) {
 			case 'tools1':
+				curr.maxSupply = 25;
 				curr.isTools = true;
 				curr.speed = 100;
 				break;
 			case 'tools2':
+				curr.maxSupply = 25;
 				curr.isTools = true;
 				curr.speed = 200;
 				break;
 			case 'tools3':
+				curr.maxSupply = 25;
 				curr.isTools = true;
 				curr.speed = 75;
 				break;
 			case 'tools4':
+				curr.maxSupply = 25;
 				curr.isTools = true;
 				curr.speed = 150;
 				break;
@@ -396,16 +772,19 @@ function initialize() {
 				curr.unitPrice = 2;
 				curr.bonusCurrencies = ['tools1', 'forest'];
 				curr.sales = 'sales1';
+				curr.isResource = true;
 				break;
 			case 'forest':
 				curr.speed = 200;
 				curr.maxSupply = 25;
+				curr.isBiome = true;
 				break;
 			case 'rubber':
 				curr.speed = 150;
 				curr.unitPrice = 2.5;
 				curr.bonusCurrencies = ['tools2', 'forest'];
 				curr.sales = 'sales1';
+				curr.isResource = true;
 				break;
 
 			case 'stone':
@@ -413,16 +792,19 @@ function initialize() {
 				curr.unitPrice = 3.5;
 				curr.bonusCurrencies = ['tools1', 'mountain'];
 				curr.sales = 'sales1';
+				curr.isResource = true;
 				break;
 			case 'mountain':
 				curr.speed = 100;
 				curr.maxSupply = 25;
+				curr.isBiome = true;
 				break;
 			case 'ore':
 				curr.speed = 50;
-				curr.unitPrice = 10;
+				curr.unitPrice = 12;
 				curr.bonusCurrencies = ['tools4', 'mountain'];
 				curr.sales = 'sales1';
+				curr.isResource = true;
 				break;
 
 			case 'food':
@@ -430,16 +812,19 @@ function initialize() {
 				curr.unitPrice = 3;
 				curr.bonusCurrencies = ['tools2', 'prairie'];
 				curr.sales = 'sales2';
+				curr.isResource = true;
 				break;
 			case 'prairie':
 				curr.speed = 100;
 				curr.maxSupply = 25;
+				curr.isBiome = true;
 				break;
 			case 'livestock':
 				curr.speed = 25;
-				curr.unitPrice = 15;
+				curr.unitPrice = 12;
 				curr.bonusCurrencies = ['tools3', 'prairie'];
 				curr.sales = 'sales2';
+				curr.isResource = true;
 				break;
 
 			case 'coral':
@@ -447,19 +832,24 @@ function initialize() {
 				curr.unitPrice = 8;
 				curr.bonusCurrencies = ['tools4', 'ocean'];
 				curr.sales = 'sales2';
+				curr.isResource = true;
 				break;
 			case 'ocean':
 				curr.speed = 25;
 				curr.maxSupply = 25;
+				curr.isBiome = true;
 				break;
 			case 'oil':
 				curr.speed = 5;
 				curr.unitPrice = 50;
 				curr.bonusCurrencies = ['tools3', 'ocean'];
 				curr.sales = 'sales2';
+				curr.isResource = true;
 				break;
 
 		}
+		
+		curr.baseUnitPrice = curr.unitPrice;
 
 		$("#" + currency + "AddWorker").click(function() {
 			addWorker(currency);
@@ -486,7 +876,12 @@ function initialize() {
 	$('#selectSaveTextData').click(selectSaveTextData);
 	$('#resetGame').click(resetGameConfirm);
 
-	_.each([1,2,3,4], function(count) {
+	_.each(player.currencies, function(currency) {
+		$(currency.domBar).click(function() { clickProgressBar(currency.name); });
+		$('#' + currency.name + 'BarWrapper').click(function() { clickProgressBar(currency.name); });
+	});
+
+	_.each([1,2,3,4,5], function(count) {
 		$('#upgrade' + count + 'Button').click(function() { buyUpgrade(count); });
 	});
 	$('#superDevMode').click(function() {
@@ -497,7 +892,7 @@ function initialize() {
 	window.onbeforeunload = function(evt) {
 		if(!game.isResettingGame) {
 			saveGameToStorage();
-			console.log('Game saved successfully?');
+			console.debug('Game saved successfully.');
 		}
 	};
 	
@@ -529,10 +924,14 @@ function rot13(s)
 function resetGameConfirm() {
 	var confirm = window.confirm("Are you sure you want to reset your game? This will delete all your data!");
 	if(confirm == true) {
-		localStorage.removeItem('player');
-		game.isResettingGame = true;
-		location.reload(true);
+		resetGame();
 	}
+}
+
+function resetGame() {
+	localStorage.removeItem('player');
+	game.isResettingGame = true;
+	location.reload(true);
 }
 
 function selectSaveTextData() {
@@ -564,21 +963,25 @@ function saveGameToStorage() {
 
 function getSaveGameData() {
 	var curatedPlayer = {
+		version: player.version,
+		prestigeLevel: player.prestigeLevel,
 		currencies: {},
 		click: {
 		    power: player.click.power,
 		    throttle: player.click.throttle,
 		    throttlePerSecond: player.click.throttlePerSecond
 		},
+		passiveMoney: player.passiveMoney,
 		workers: player.workers,
 		workersUsed: player.workersUsed,
 		workerCost: player.workerCost,
+		workerCostFactor: player.workerCostFactor,
+		workerCostDecrement: player.workerCostDecrement,
 		rating: player.rating,
 		
 		unlocks: player.unlocks,
 		upgrades: {},
 		
-		ticks: player.ticks,
 		totalTicks: player.totalTicks
 	};
 	
@@ -599,8 +1002,12 @@ function getSaveGameData() {
 			quantity: currency.quantity,
 			multiplier: currency.multiplier,
 
+			baseUnitPrice: currency.baseUnitPrice,
 			unitPrice: currency.unitPrice,
 			supplyCost: currency.supplyCost,
+
+			bonusCurrencies: currency.bonusCurrencies,
+			rampCurrencies: currency.rampCurrencies,
 			
 			name: currency.name
 		}
@@ -613,15 +1020,26 @@ function getSaveGameData() {
 	return JSON.stringify(curatedPlayer);
 }
 
+function backupSaveGame() {
+	var playerStr = localStorage.getItem('player');
+	localStorage.setItem('backup-player', playerStr);
+	console.debug(playerStr);
+	console.log("Previous save data backed up, just in case.");
+}
+
 function loadGameFromText() {
+	backupSaveGame();
 	var playerStr = $('#loadTextData').val();
 	try {
 		playerStr = atob(rot13(playerStr));
 		parseLoadData(playerStr);
+		localStorage.setItem('player', playerStr);
+		game.isResettingGame = true;
+		location.reload(true);
 	}
 	catch (e) {
-		console.log('Failed to load data from text');
-		console.log(e);
+		console.error('Failed to load data from text');
+		console.error(e);
 		$('#loadTextDataFailedAlert').removeClass('hidden');
 		return;
 	}
@@ -631,7 +1049,26 @@ function loadGameFromText() {
 
 function loadGameFromStorage() {
 	var playerStr = localStorage.getItem('player');
-	parseLoadData(playerStr);
+	var prestigeStr = localStorage.getItem('prestige');
+	
+	if(prestigeStr) {
+		if(playerStr === null) {
+			var prestige = JSON.parse(prestigeStr);
+			
+			player.prestigeLevel = prestige.prestigeLevel;
+			player.rating = prestige.rating;
+			player.currencies.money.supply = prestige.money;
+			player.workers = prestige.workers;
+			
+			localStorage.removeItem('prestige');
+			return;
+		}
+		else {
+			console.log("Catastrophic prestige failure, your player record was not properly reset. Continuing as if you didn't prestige.");
+		}
+	}
+	var playerObj = parseLoadData(playerStr);
+	initializeLoadData(playerObj);
 }
 
 function parseLoadData(playerStr) {
@@ -641,11 +1078,25 @@ function parseLoadData(playerStr) {
 	
 	var playerObj = JSON.parse(playerStr);
 	
+	return playerObj;
+}
+
+function initializeLoadData(playerObj) {
+	if(!playerObj) {
+		return;
+	}
+	
+	repairSave(playerObj);
+	
 	$.extend(true, player, playerObj);
+	
+	_.each(upgrades, function(upgrade) {
+		upgrade.bought = false;
+	});
 	
 	_.each(player.upgrades, function(value, upgradeId) {
 		player.upgrades[upgradeId] = upgrades[upgradeId];
-		delete upgrades[upgradeId];
+		upgrades[upgradeId].bought = true;
 	});
 	
 	_.each(player.unlocks, function(value, unlockId) {
@@ -656,28 +1107,101 @@ function parseLoadData(playerStr) {
 		updateUI(currency);	
 		updateGainMultiplier(currency, currency.lastGainMultiplier);
 	});
+	
 	updateUpgradesUI();
 }
 
 
-
-
-
-
-function clickProgressBar(currencyName) {
-	$('#' + currencyName + '')
+function prestige() {
+	if(!checkPrestige()) {
+		return;
+	}
+	
+	var prestige = {
+		prestigeLevel: player.prestigeLevel + 1,
+		rating: player.rating,
+		money: getRoundedCurrencyNum(Math.sqrt(player.workerCost/10)),
+		workers: player.prestigeLevel*2
+	}
+	
+	var prestigeStr = JSON.stringify(prestige);
+	
+	localStorage.setItem('prestige', prestigeStr);
+	resetGame();
 }
+
+function checkPrestige() {
+	var valid = true;
+	
+	_.each(player.currencies, function(currency) {
+		if(currency.isResource && currency.lastGainMultiplier < 16) {
+			valid = false;
+		}
+	});
+	
+	return valid;
+}
+
+function repairSave(player) {
+	if(isNaN(player.version) || player.version < 3) {
+		backupSaveGame();
+		console.log('Upgrading save data from version ' + player.version + ' to 3 (v1.1.1)');
+		player.version = 3;
+		
+		var removedUpgrades = ['dedicatedResources', 'crossToolSynergy', 'growthEconomy'];
+		
+		for(var i in removedUpgrades) {
+			if(i in player.upgrades) {
+				delete player.upgrades[i];
+				console.debug('Deleted old upgrade: ' + i);
+			}
+		}
+
+		_.each(player.upgrades, function(value, upgradeId) {
+			if(value == undefined) {
+				delete player.upgrades[upgradeId];
+				console.debug('Delete invalid upgrade: ' + upgradeId);
+			}
+			
+			if((upgradeId == "cutToolSynergy" && player.currencies.tools1.rampCurrencies === undefined)
+				|| (upgradeId == "motoToolSynergy" && player.currencies.tools2.rampCurrencies === undefined)
+				|| (upgradeId == "aquaToolSynergy" && player.currencies.tools3.rampCurrencies === undefined)
+				|| (upgradeId == "heatToolSynergy" && player.currencies.tools4.rampCurrencies === undefined)) {
+				upgrades[upgradeId].apply();
+			}
+		});
+		
+		var oldWorkers = player.workers;
+		var oldWorkersUsed = player.workersUsed;
+		
+		player.workers = 0;
+		player.workerCost = 15;
+		player.workerCostFactor = 0.15;
+		player.workerCostDecrement = 0.991;
+		
+		while(player.workers <= oldWorkers) {
+			player.workers++;
+			player.workerCost = getNewCost(player.workerCost);
+		}
+		
+	}
+}
+
+
+function recalculateUnitPrice(currency) {
+	currency.unitPrice = getRoundedCurrencyNum(currency.baseUnitPrice + (currency.baseUnitPrice * 0.25 * (currency.level-1)));
+}
+
 
 function buyUpgrade(slot) {
 	var $elem = $('#upgrade' + slot);
 	var upgrade = $elem.data('upgrade');
-	console.log(upgrade);
-	
+
 	if(player.currencies.money.supply >= upgrade.cost) {
-		player.currencies.money.supply -= upgrade.cost;
-		
+		addMoney(upgrade.cost * -1);
+
 		player.upgrades[upgrade.id] = upgrade;
-		delete upgrades[upgrade.id];
+		upgrades[upgrade.id].bought = true;
 		
 		upgrade.apply();
 		
@@ -689,9 +1213,9 @@ function buyUpgrade(slot) {
 function updateUpgradesUI() {
 	var count = 1;
 	_.each(upgrades, function(upgrade) {
-		if(count > 4) { return; }
-		console.log(upgrade);
-
+		if(count > 5) { return; }
+		if(upgrade.bought == true) { return; }
+		
 		var $elem;
 		$elem = $('#upgrade' + count);
 		$elem.attr('data-original-title', upgrade.tooltip);
@@ -710,7 +1234,7 @@ function updateUpgradesUI() {
 		count++;
 	});
 	
-	while(count <= 4) {
+	while(count <= 5) {
 		var $elem;
 		$elem = $('#upgrade' + count);
 		$elem.attr('data-original-title', "You bought it all, you're quite the tycoon!");
@@ -729,10 +1253,6 @@ function updateUpgradesUI() {
 }
 
 
-
-
-
-
 var autoClicker = null;
 function clickAuto() {
 	if(autoClicker) {
@@ -741,9 +1261,24 @@ function clickAuto() {
 	autoClicker = setInterval(clickMoney, 250);
 }
 
-function progressCurrency(currency) {
+function progressCurrency(currency, manual) {
 	currency.computedSpeed = currency.workers * currency.speed * player.globalSpeedMultiplier;
-	currency.progress += currency.computedSpeed / 100;
+	if(manual) {
+		currency.progress += currency.speed * player.globalSpeedMultiplier / 100;
+	}
+	else {
+		currency.progress += currency.computedSpeed / 100;
+	}
+	
+	if(currency.computedSpeed >= 5000 && currency.progressBarFrozen == false) {
+		var $elem = $(currency.domBar);
+		$elem.attr("aria-valuenow", 100);
+		$elem.width("100%");
+		currency.progressBarFrozen = true;
+	}
+	else if(currency.computedSpeed < 5000 && currency.progressBarFrozen == true) {
+		currency.progressBarFrozen = false;
+	}
 }
 
 function gainCurrency(currency) {
@@ -755,7 +1290,7 @@ function gainCurrency(currency) {
 		}
 		else {
 			currency.progress -= 100;
-			gainExp(currency, 1);
+			gainExp(currency, 1 * 1/player.globalSpeedMultiplier); // hack to allow exp rate to be the same no matter what the global speed multi is
 			
 			if(currency.isSales) {
 				doSalesGain(currency);
@@ -771,18 +1306,16 @@ function gainExp(currency, value) {
 	currency.exp += value;
 	while(currency.exp >= currency.exptnl) {
 		currency.level += 1;
-		player.rating = parseFloat(player.rating);
 		if(currency.isSales) {
 			currency.maxSupply += 10;
-			player.rating += 0.10;
+			player.rating = addRoundedCurrencyNum(player.rating, 0.10);
 		}
 		else {
-			currency.unitPrice = getRoundedCurrencyNum(currency.unitPrice * 1.2);
-			player.rating += 0.05;
+			recalculateUnitPrice(currency);
+			player.rating = addRoundedCurrencyNum(player.rating, 0.05);
 		}
-		player.rating = getRoundedCurrency(player.rating);
 		currency.exp -= currency.exptnl;
-		currency.exptnl = currency.exptnl * (1.05 + currency.speed/150);
+		currency.exptnl = currency.exptnl * (1.1 + currency.speed/400);
 	}
 }
 
@@ -791,10 +1324,15 @@ function doStandardGain(currency) {
     var gainMultiplier = 1;	
 	_.each(currency.bonusCurrencies, function(bonusCurrencyName) {
 		var bonusCurr = player.currencies[bonusCurrencyName];
-		if((bonusCurr.supply/bonusCurr.maxSupply*100) >= 80) {
+		if(bonusCurr.supply >= 20) {
 			bonusCurr.supply -= 1;
 			calculatedSupply *= 2;
 			gainMultiplier *= 2;
+		}
+		if(bonusCurr.supply >= 40) {
+			bonusCurr.supply -= 1;
+			calculatedSupply *= 1.5;
+			gainMultiplier *= 1.5;
 		}
 		if(bonusCurr.supply >= 1) {
 			bonusCurr.supply -= 1;
@@ -819,21 +1357,8 @@ function doStandardGain(currency) {
 	calculatedSupply *= player.globalSupplyMultiplier;
 	calculatedSupply = Math.round(Math.min(calculatedSupply, currency.maxSupply - currency.supply));
 	
-	console.log(currency.name + " gained " + calculatedSupply + " units");
 	currency.supply += calculatedSupply;
 	currency.totalSupplyEarned += calculatedSupply;
-}
-
-function getRoundedCurrency(value) {
-	value = parseFloat(value);
-	value = value.toFixed(2);
-	return value;
-}
-
-function getRoundedCurrencyNum(value) {
-	value = getRoundedCurrency(value);
-	value = parseFloat(value);
-	return value;
 }
 
 function doSalesGain(currency) {
@@ -848,9 +1373,8 @@ function doSalesGain(currency) {
 		currency.supply -= soldSupply;
 		currency.supplyCost -= soldCost;
 		
-		addMoney(soldCost);
+		soldCost = earnMoney(soldCost);
 		currency.lastSale = getRoundedCurrency(soldCost);
-		console.log(currency.name + " SOLD " + soldSupply + " units for $" + soldCost);
 	}
 
 	var transportedTotalSupply = 0;
@@ -865,34 +1389,44 @@ function doSalesGain(currency) {
 			sellCurr.supply -= transportedSupply;
 			transportedTotalSupply += transportedSupply;
 			transportedTotalCost += transportedCost;
-			
-			console.log(currency.name + " shipped " + transportedSupply + " units of " + sellCurr.name + " for $" + transportedCost);
 		}
 	});
 	
 	transportedTotalSupply = Math.round(transportedTotalSupply);
 	if(transportedTotalSupply >= 1) {
-		console.log(currency.name + " shipped " + transportedTotalSupply + " total units for $" + transportedTotalCost);
 		currency.supply += transportedTotalSupply;
 		currency.supplyCost += transportedTotalCost;
 	}
 }
 
-function addMoney(val) {
+function earnMoney(val) {
 	val = parseFloat(val) * player.rating;
-	console.log("gained $" + val);
+	addMoney(val);
+	return val;
+}
+
+function addMoney(val) {
 	var money = player.currencies.money;
-	money.supply = parseFloat(money.supply);
+	money.supply = parseFloat(money.supply/*.replace(/,/g, '')*/);
 	money.supply += val;
-	money.supply = getRoundedCurrency(money.supply);
+	money.supply = getRoundedCurrency(money.supply)/*.commafy()*/;
+	return val;
+}
+
+function clickProgressBar(currencyName) {
+	if(player.click.throttle < player.click.throttlePerSecond) {
+		
+		for(var i = 1; i <= player.click.power * 3; i++) {
+			progressCurrency(player.currencies[currencyName], true);
+		}
+		
+		player.click.throttle += 1;
+	}
 }
 
 function clickMoney() {
 	if(player.click.throttle < player.click.throttlePerSecond) {
-		var money = player.currencies.money;
-		money.supply = parseFloat(money.supply);
-		money.supply += player.click.power;
-		money.supply = getRoundedCurrency(money.supply);
+		addMoney(player.click.power);
 		player.click.throttle += 1;
 	}
 }
@@ -902,7 +1436,7 @@ function hireWorker() {
 	if(money.supply >= player.workerCost) {
 		player.workers += 1;
 		money.supply -= player.workerCost;
-		player.workerCost = getNewCost(player.workerCost, 1.14);
+		player.workerCost = getNewCost(player.workerCost);
 		money.supply = getRoundedCurrency(money.supply);
 	}
 }
@@ -921,8 +1455,31 @@ function removeWorker(currency) {
 	}
 }
 
-function getNewCost(cost, factor) {
-	cost = cost * factor;
+function newCostTest() {
+	var wc = 15; var wcf = 0.15; var wcd = 0.991; var totalCost = wc;
+	for(var works = 1; works <= 110; works++) {
+	    console.warn(works + " costs " + wc + " (" + totalCost +")");
+	    wcf *= wcd;
+	    wc = wc * (1.000 + wcf);
+	    totalCost += wc;
+	}
+	console.warn("wcf " + wcf);
+}
+
+function oldCostTest() {
+	var wc = 15; var wcf = 1.15; var wcd = 0.99912; var totalCost = wc;
+	for(var works = 1; works <= 110; works++) {
+	    console.warn(works + " costs " + wc + " (" + totalCost +")");
+	    wcf *= wcd;
+	    wc = wc * wcf;
+	    totalCost += wc;
+	}
+	console.warn("wcf " + wcf);
+}
+
+function getNewCost(cost) {
+	player.workerCostFactor *= player.workerCostDecrement
+	cost = cost * (1.000 + player.workerCostFactor);
 	return Math.round(cost);
 }
 
@@ -950,9 +1507,12 @@ function updateGainMultiplier(currency, gainMultiplier) {
 
 function updateUI(currency) {
 	var val = 0;
-	var $elem = $(currency.domBar);
-	$elem.attr("aria-valuenow", currency.progress);
-	$elem.width(currency.progress + "%");
+	var $elem = null;
+	if(currency.progressBarFrozen == false) {
+		$elem = $(currency.domBar);
+		$elem.attr("aria-valuenow", currency.progress);
+		$elem.width(currency.progress + "%");
+	}
 	
 	$elem = $(currency.domSupplyBar);
 	val = currency.supply / currency.maxSupply * 100;
@@ -963,18 +1523,13 @@ function updateUI(currency) {
 	val = currency.exp / currency.exptnl * 100;
 	$elem.attr("aria-valuenow", val);
 	$elem.width(val + "%");
-
-	$elem = $(currency.domValue);
-	$elem.html("<b>" + Math.round(currency.supply).commafy() + "</b> (" + Math.round(currency.progress) + "%)<br>" + currency.workers + " workers harvesting "
-		 + Math.round(currency.quantity * currency.power * currency.multiplier).commafy()
-		 + " (" + currency.quantity.commafy() + " * " + currency.power.commafy() + " * " + Math.round(currency.multiplier).commafy() + ")");
 }
 
 function gameLoop() {
 	gameLoopCounter++;
 	if(gameLoopCounter == 1) {
 		_.each(player.currencies, function(currency) {
-			progressCurrency(currency);
+			progressCurrency(currency, false);
 			gainCurrency(currency);
 			if(player.ticks % 1 == 0) {
 				updateUI(currency);
@@ -986,6 +1541,10 @@ function gameLoop() {
 			if(player.click.throttle > 0) {
 				player.click.throttle -= 1;
 			}
+		}
+		
+		if(player.ticks % 50 == 0) {
+			addMoney(player.passiveMoney);
 		}
 		
 		// 2 seconds
@@ -1074,7 +1633,7 @@ function checkUnlocks() {
 		}
 	}
 	if(!("sales1" in player.unlocks)) {
-		if(player.currencies.wood.supply >= 30) {
+		if(player.prestigeLevel > 0 || player.currencies.wood.supply >= 30) {
 		    applyUnlock("sales1");
 		}
 	}
@@ -1089,7 +1648,7 @@ function checkUnlocks() {
 		}
 	}
 	if(!("upgrades" in player.unlocks)) {
-		if(player.rating >= 1.25) {
+		if(player.prestigeLevel > 0 || player.rating >= 1.25) {
 		    applyUnlock("upgrades");
 		}
 	}
@@ -1099,7 +1658,7 @@ function checkUnlocks() {
 		}
 	}
 	if(!("harvestmoon" in player.unlocks)) {
-		if(player.rating >= 1.40) {
+		if(player.workers >= 20 && player.rating >= 1.40) {
 		    applyUnlock("harvestmoon");
 		}
 	}
@@ -1119,17 +1678,17 @@ function checkUnlocks() {
 		}
 	}
 	if(!("oceanquad" in player.unlocks)) {
-		if(player.rating >= 3.00) {
+		if(player.workers >= 40 && player.rating >= 3.00) {
 		    applyUnlock("oceanquad");
 		}
 	}
 	if(!("tools4" in player.unlocks)) {
-		if(player.rating >= 4.00) {
+		if(player.workers >= 70 && player.rating >= 4.00) {
 		    applyUnlock("tools4");
 		}
 	}
 	if(!("bigmoney" in player.unlocks)) {
-		if(player.rating >= 5.00) {
+		if(player.workers >= 70 && player.rating >= 5.00) {
 		    applyUnlock("bigmoney");
 		}
 	}
@@ -1167,4 +1726,21 @@ Number.prototype.commafy = function () {
 	return String(this).commafy();
 }
 
+// TODO: Candidate for some refactoring. Should write some regex to optimize this so we don't parseFloat() multiple times in the same stack.
+function getRoundedCurrency(value) {
+	value = parseFloat(value);
+	value = value.toFixed(2);
+	return value;
+}
 
+function getRoundedCurrencyNum(value) {
+	value = getRoundedCurrency(value);
+	value = parseFloat(value);
+	return value;
+}
+
+function addRoundedCurrencyNum(input, value) {
+	input = getRoundedCurrencyNum(input);
+	input += value;
+	return getRoundedCurrency(input);
+}

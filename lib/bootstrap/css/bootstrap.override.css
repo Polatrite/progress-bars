@@ -2,6 +2,12 @@
     margin-bottom: 6px;
 }
 
+.progress-bar {
+  -webkit-transition: width .1s ease;
+       -o-transition: width .1s ease;
+          transition: width .1s ease;
+}
+
 .btn-md {
     padding: 4px 12px;
 }

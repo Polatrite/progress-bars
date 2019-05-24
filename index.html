@@ -1,7 +1,10 @@
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Progress Bars v1.0.0</title>
+	<title>Progress Bars v1.1.0</title>
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+	
+	
 	<script src="lib/underscore.min.js" text="type/javascript"></script>
 	<script src="lib/jquery.min.js" text="type/javascript"></script>
 	<script src="lib/jquery.cookie.js" text="type/javascript"></script>
@@ -87,9 +90,12 @@ window.console = console;
 </div>
 
 <div class="row row-margin">
-	<div class="col-lg-1"></div>
-	<div class="col-lg-2"></div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-3">
+		<a href="http://www.reddit.com/r/polatrite" style="text-decoration: underline;">Subreddit</a> | <a href="http://www.reddit.com/r/incremental_games" style="text-decoration: underline;">Incremental Games</a> | <a href="http://www.github.com/Polatrite/progress-bars" style="text-decoration: underline;">Source</a>
+		<br>
+		v1.1.1
+	</div>
+	<div class="col-md-2 col-sm-4">
 		<div id="stoneDiv" class="invisible">
 			<!-- stone -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -97,18 +103,18 @@ window.console = console;
 				Stone L${currencies.stone.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.stone.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Price: $${currencies.stone.unitPrice}
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.stone.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.stone.supply}/${currencies.stone.maxSupply}
 				</div>
 			</div>
@@ -126,7 +132,7 @@ window.console = console;
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-2 col-sm-4">
 		<div id="tools1Div" class="invisible">
 			<!-- tools -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -134,17 +140,17 @@ window.console = console;
 				Cut Tools L${currencies.tools1.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.tools1.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.tools1.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.tools1.supply}/${currencies.tools1.maxSupply}
 				</div>
 			</div>
@@ -161,7 +167,7 @@ window.console = console;
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-2 col-sm-4">
 		<div id="woodDiv">
 			<!-- wood -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -169,18 +175,18 @@ window.console = console;
 				Wood L${currencies.wood.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.wood.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Price: $${currencies.wood.unitPrice}
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.wood.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.wood.supply}/${currencies.wood.maxSupply}
 				</div>
 			</div>
@@ -198,16 +204,16 @@ window.console = console;
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-1"></div>
-	<div class="col-lg-2">
+	<div class="col-md-1"></div>
+	<div class="col-md-2">
 		<br/>
 		<a id="helpButton" href="./help.html" target="_blank" role="button" class="btn btn-default color-sales">How do I Play&#63;</a>
 	</div>
 </div>
 <div class="row row-margin">
-	<div class="col-lg-1"></div>
-	<div class="col-lg-1"></div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-1"></div>
+	<div class="col-md-1"></div>
+	<div class="col-md-2 col-sm-4">
 		<div id="mountainDiv" class="invisible well well-xs color-mountain-light">
 			<!-- mountain -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -215,17 +221,17 @@ window.console = console;
 				Mountain L${currencies.mountain.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.mountain.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.mountain.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.mountain.supply}/${currencies.mountain.maxSupply}
 				</div>
 			</div>
@@ -242,10 +248,10 @@ window.console = console;
 			</div>
 		</div>
 	</div>
-	<div id="salesMultiplierPanel" class="col-lg-4 col-sm-4 text-center invisible">
+	<div id="salesMultiplierPanel" class="col-md-4 col-sm-4 text-center invisible">
 		<h3 class="text-center bindto-player">Sales Multiplier: x${rating}</h3>
 	</div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-2 col-sm-4">
 		<div id="forestDiv" class="well well-xs color-forest-light">
 			<!-- forest -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -253,17 +259,17 @@ window.console = console;
 				Forest L${currencies.forest.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.forest.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.forest.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.forest.supply}/${currencies.forest.maxSupply}
 				</div>
 			</div>
@@ -280,11 +286,11 @@ window.console = console;
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-1"></div>
+	<div class="col-md-1"></div>
 </div>
 <div class="row row-margin">
-	<div class="col-lg-1"></div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-1"></div>
+	<div class="col-md-2 col-sm-4">
 		<div id="oreDiv" class="invisible">
 			<!-- ore -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -292,18 +298,18 @@ window.console = console;
 				Ore L${currencies.ore.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.ore.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Price: $${currencies.ore.unitPrice}
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.ore.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.ore.supply}/${currencies.ore.maxSupply}
 				</div>
 			</div>
@@ -327,17 +333,17 @@ window.console = console;
 				Heat Tools L${currencies.tools4.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.tools4.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.tools4.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.tools4.supply}/${currencies.tools4.maxSupply}
 				</div>
 			</div>
@@ -360,18 +366,18 @@ window.console = console;
 				Coral L${currencies.coral.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.coral.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Price: $${currencies.coral.unitPrice}
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.coral.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.coral.supply}/${currencies.coral.maxSupply}
 				</div>
 			</div>
@@ -391,7 +397,7 @@ window.console = console;
 	</div>
 	
 	
-	<div id="upgradePanel" class="col-lg-2 well well-sm invisible" style="overflow-y: scroll; height: 380px;">
+	<div id="upgradePanel" class="col-md-2 well well-sm invisible" style="overflow-y: scroll; height: 380px;">
 		<div id="upgrade1" data-toggle="tooltip" data-placement="top" data-original-title="Example text" class="upgrade-item">
 			<span id="upgrade1Icon" class="glyphicon"></span>
 			<label id="upgrade1Label">Example Upgrade #1</label>
@@ -412,15 +418,20 @@ window.console = console;
 			<label id="upgrade4Label">Example Upgrade #4</label>
 			<button id="upgrade4Button" class="btn btn-default btn-sm btn-upgrade pull-right">$1,200</button>
 		</div>
-		<div id="upgrade5" data-toggle="tooltip" data-placement="top" data-original-title="It's a secret to everybody!" class="upgrade-item upgrade-item-disabled">
-			<span id="upgrade5Icon" class="glyphicon glyphicon-question-sign"></span>
-			<label id="upgrade5Label">???</label>
+		<div id="upgrade5" data-toggle="tooltip" data-placement="top" data-original-title="Example text" class="upgrade-item">
+			<span id="upgrade5Icon" class="glyphicon"></span>
+			<label id="upgrade5Label">Example Upgrade #5</label>
+			<button id="upgrade5Button" class="btn btn-default btn-sm btn-upgrade pull-right">$1,200</button>
 		</div>
+		<!--<div id="upgrade6" data-toggle="tooltip" data-placement="top" data-original-title="It's a secret to everybody!" class="upgrade-item upgrade-item-disabled">
+			<span id="upgrade6Icon" class="glyphicon glyphicon-question-sign"></span>
+			<label id="upgrade6Label">???</label>
+		</div>-->
 
 	</div>
 	
 	
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-2 col-sm-4">
 		<div id="sales1Div" class="invisible">
 			<!-- sales1 -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -428,18 +439,18 @@ window.console = console;
 				Commodity Sales L${currencies.sales1.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.sales1.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Last Sale: $${currencies.sales1.lastSale}
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.sales1.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.sales1.supply}/${currencies.sales1.maxSupply}
 				</div>
 			</div>
@@ -468,18 +479,18 @@ window.console = console;
 				Functional Sales L${currencies.sales2.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.sales2.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Last Sale: $${currencies.sales2.lastSale}
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.sales2.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.sales2.supply}/${currencies.sales2.maxSupply}
 				</div>
 			</div>
@@ -499,11 +510,11 @@ window.console = console;
 	
 	
 	<!-- Output Console -->
-	<div id="output" class="col-lg-2 well well-sm invisible" style="overflow-y: scroll; height: 380px;">
+	<div id="output" class="col-md-2 well well-sm invisible" style="overflow-y: scroll; height: 380px;">
 	</div>
 	
 	
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-2 col-sm-4">
 		<div id="rubberDiv" class="invisible">
 			<!-- rubber -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -511,18 +522,18 @@ window.console = console;
 				Rubber L${currencies.rubber.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.rubber.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Price: $${currencies.rubber.unitPrice}
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.rubber.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.rubber.supply}/${currencies.rubber.maxSupply}
 				</div>
 			</div>
@@ -546,17 +557,17 @@ window.console = console;
 				Moto Tools L${currencies.tools2.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.tools2.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.tools2.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.tools2.supply}/${currencies.tools2.maxSupply}
 				</div>
 			</div>
@@ -579,18 +590,18 @@ window.console = console;
 				Food L${currencies.food.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.food.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Price: $${currencies.food.unitPrice}
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.food.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.food.supply}/${currencies.food.maxSupply}
 				</div>
 			</div>
@@ -610,9 +621,9 @@ window.console = console;
 	</div>
 </div>
 <div class="row row-margin">
-	<div class="col-lg-1"></div>
-	<div class="col-lg-1"></div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-1"></div>
+	<div class="col-md-1"></div>
+	<div class="col-md-2 col-sm-4">
 		<div id="oceanDiv" class="invisible well well-xs color-ocean-light">
 			<!-- ocean -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -620,17 +631,17 @@ window.console = console;
 				Ocean L${currencies.ocean.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.ocean.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.ocean.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.ocean.supply}/${currencies.ocean.maxSupply}
 				</div>
 			</div>
@@ -647,8 +658,8 @@ window.console = console;
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-4"></div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-4"></div>
+	<div class="col-md-2 col-sm-4">
 		<div id="prairieDiv" class="invisible well well-xs color-prairie-light">
 			<!-- prairie -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -656,17 +667,17 @@ window.console = console;
 				Prairie L${currencies.prairie.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.prairie.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.prairie.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.prairie.supply}/${currencies.prairie.maxSupply}
 				</div>
 			</div>
@@ -683,12 +694,12 @@ window.console = console;
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-1"></div>
+	<div class="col-md-1"></div>
 </div>
 <div class="row row-margin">
-	<div class="col-lg-1"></div>
-	<div class="col-lg-2"></div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-1"></div>
+	<div class="col-md-2"></div>
+	<div class="col-md-2 col-sm-4">
 		<div id="oilDiv" class="invisible">
 			<!-- oil -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -696,18 +707,18 @@ window.console = console;
 				Oil L${currencies.oil.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.oil.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Price: $${currencies.oil.unitPrice}
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.oil.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.oil.supply}/${currencies.oil.maxSupply}
 				</div>
 			</div>
@@ -725,7 +736,7 @@ window.console = console;
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-2 col-sm-4">
 		<div id="tools3Div" class="invisible">
 			<!-- tools3 -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -733,17 +744,17 @@ window.console = console;
 				Aqua Tools L${currencies.tools3.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.tools3.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.tools3.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.tools3.supply}/${currencies.tools3.maxSupply}
 				</div>
 			</div>
@@ -760,7 +771,7 @@ window.console = console;
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-2 col-sm-4">
+	<div class="col-md-2 col-sm-4">
 		<div id="livestockDiv" class="invisible">
 			<!-- livestock -->
 			<h4 class="text-center bindto-player" data-toggle="tooltip" data-html="true"
@@ -768,18 +779,18 @@ window.console = console;
 				Livestock L${currencies.livestock.level}
 			</h4>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Workers: ${currencies.livestock.workers}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Price: $${currencies.livestock.unitPrice}
 				</div>
 			</div>
 			<div class="row bindto-player">
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Speed: ${currencies.livestock.computedSpeed}
 				</div>
-				<div class="col-lg-6">
+				<div class="col-md-6">
 					Supply: ${currencies.livestock.supply}/${currencies.livestock.maxSupply}
 				</div>
 			</div>
@@ -797,22 +808,32 @@ window.console = console;
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-2"></div>
+	<div class="col-md-2"></div>
 </div>
 <div class="row row-margin">
-	<div class="col-lg-8"></div>
-	<div class="col-lg-2">
+	<div class="col-md-8"></div>
+	<div class="col-md-2">
 		<button type="button" id="resetGame" class="btn btn-default color-coral pull-left">Reset Game</button>
 		<button type="button" id="saveGame" class="btn btn-default color-food pull-left hidden">Save Game</button>
 		<button type="button" id="loadGame" class="btn btn-default color-mountain pull-left hidden">Load Game</button>
 		<button type="button" id="saveGameTextExport" class="btn btn-default color-food pull-left" data-toggle="modal" data-target="#saveLoadModal">Save/Load via Text</button>
 	</div>
-	<div class="col-lg-2">
-		<button type="button" id="workMode" class="btn btn-default color-stone pull-left">Work Mode</button>
+	<div class="col-md-2">
+		<button type="button" id="workMode" class="btn btn-default color-stone pull-left">Work Mode (coming soon)</button>
 		<button type="button" id="nightMode" class="btn btn-default color-stone pull-left">Night Mode</button>
 		<button type="button" id="superDevMode" class="btn btn-default color-stone pull-left hidden">Top Secret Dev Mode</button>
 	</div>
 </div>
 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-56485884-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 </body>
 </html>
